@@ -20,7 +20,7 @@ const Permalinks = {
 			const chars_to_check = route.substring(0, 6)
 
 
-			if ( !is_redirect_src && permalink ) {
+			if ( !is_redirect_src && permalink.length ) {
 				resolve(false)
 			}
 
