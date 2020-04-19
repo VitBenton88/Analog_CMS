@@ -205,14 +205,22 @@ module.exports = {
 
     inArray: (array, value, index=0, returnValueIfTrue) => {
         let returnValue
-        if ( Array.isArray(array) ) {
-            for (let i = index; i < array.length; i++) {
-                if (array[i].toString() === value.toString()) {
-                    returnValue = returnValueIfTrue;
-                    break;
+        if (value) {
+            const value_formatted = typeof value == "string" ? value : value.toString()
+            if ( Array.isArray(array) ) {
+                for (let i = index; i < array.length; i++) {
+                    const element = array[i]
+                    if (element) {
+                        const arr_value = typeof element == "string" ? element : element.toString()
+                        if (arr_value === value_formatted) {
+                            returnValue = returnValueIfTrue;
+                            break;
+                        }
+                    }
                 }
             }
         }
+
         return returnValue
     }
 }

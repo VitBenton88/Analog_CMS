@@ -8,7 +8,7 @@
                 {{#each terms}}
                 {{#with this}}
                     <div class="custom-control custom-checkbox">
-                        <input type="checkbox" name="taxonomies" class="custom-control-input" id="termCustomCheck-{{@../key}}-{{@key}}" value="{{_id}}"{{#if editing}}{{inArray associations ../../post._id 0 " checked"}}{{/if}}>
+                        <input type="checkbox" name="taxonomies" class="custom-control-input" id="termCustomCheck-{{@../key}}-{{@key}}" value="{{_id}}"{{inArray associations ../../post._id 0 " checked"}}>
                         <label class="custom-control-label" for="termCustomCheck-{{@../key}}-{{@key}}">{{name}}</label>
                     </div>
                 {{/with}}
