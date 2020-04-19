@@ -111,6 +111,8 @@ module.exports = (app, db, slugify, Utils) => {
 			title
 		} = body
 
+		let route = title ? slugify(title) : undefined
+
 		try {
 			// basic validation
 			if (!template || !title) {
@@ -124,12 +126,11 @@ module.exports = (app, db, slugify, Utils) => {
 			sitemap = sitemap == "on" ? true : false
 			image = image === '' ? null : image
 			const author = user._id
-			let route = slugify(title)
 
 			// check if permalink already exists and checks against reserved routes
-			const permalinkExists = await Utils.Permalinks.validate(route)
+			const permalinkVerified = await Utils.Permalinks.validate(route)
 
-			if (permalinkExists) {
+			if (!permalinkVerified) {
 				route = `${route}2`
 			}
 
@@ -149,10 +150,10 @@ module.exports = (app, db, slugify, Utils) => {
 			// finally go back and assign that permalink and meta to the newly created page
 			await db.Pages.updateOne({_id: owner}, {permalink, meta})
 
-			req.flash(
-				'admin_success',
-				'Page successfully added.'
-			)
+			const flash_type = permalinkVerified ? 'admin_success' : 'admin_warning'
+			const flash_message = permalinkVerified ? 'Page successfully created.' : 'Page successfully created however the provided permalink was already in use so it was modified.'
+
+			req.flash(flash_type, flash_message)
 			res.redirect(`/admin/pages/edit/${owner}`)
 
 		} catch (error) {
@@ -244,6 +245,7 @@ module.exports = (app, db, slugify, Utils) => {
 		} = req.body
 
 		const redirect_url = `/admin/pages/edit/${_id}`
+		route = title ? slugify(title) : undefined
 
 		try {
 			// basic validation
@@ -263,6 +265,13 @@ module.exports = (app, db, slugify, Utils) => {
 
 			// make sure route is in slug format
 			route = slugify(route)
+			// check if permalink already exists and checks against reserved routes
+			const permalinkVerified = await Utils.Permalinks.validate(route)
+
+			if (!permalinkVerified) {
+				route = `${route}2`
+			}
+
 			// update post's fields in db ...
 			const updatedPage = await db.Pages.findOneAndUpdate({_id}, {active, blocks, content, forms, homepage, image, private, template, title, updated})
 			// capture the id of updated page
@@ -274,10 +283,10 @@ module.exports = (app, db, slugify, Utils) => {
 			// finally update any links that use this page's route (that were created as a reference to an existing page)
 			await db.Links.updateMany({route: `/${originalRoute}`, is_ref: true}, {route: `/${updatedPermalink.full}`})
 
-			req.flash(
-				'admin_success',
-				'Page successfully updated.'
-			)
+			const flash_type = permalinkVerified ? 'admin_success' : 'admin_warning'
+			const flash_message = permalinkVerified ? 'Page successfully updated.' : 'Page successfully updated however the provided permalink was already in use so it was modified.'
+
+			req.flash(flash_type, flash_message)
 			res.redirect(redirect_url)
 
 		} catch (error) {

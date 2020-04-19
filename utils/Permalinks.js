@@ -10,15 +10,17 @@ const Permalinks = {
 				throw new Error('Validate method expects route.')
 			}
 
+			const permalink = await db.Permalinks.find({ permalink: route }).lean()
+
+			// re-format route for comparing to redirect sources
             if ( route.charAt(0) !== "/" ) {
                 route = `/${route}`
             }
-
-			const permalink = await db.Permalinks.find({ permalink: route }).lean()
 			const reserved_arr = ['/admin', '/login']
 			const chars_to_check = route.substring(0, 6)
 
-			if ( !is_redirect_src && permalink.length ) {
+
+			if ( !is_redirect_src && permalink ) {
 				resolve(false)
 			}
 

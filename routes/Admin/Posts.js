@@ -144,6 +144,8 @@ app.post("/addpost", async (req, res) => {
 		title
 	} = body
 
+	let route = title ? slugify(title) : undefined
+
 	try {
 		// basic validation
 		if (!template || !title) {
@@ -157,12 +159,11 @@ app.post("/addpost", async (req, res) => {
 		sitemap = sitemap == "on" ? true : false
 		image = image === '' ? null : image
 		const author = user._id
-		let route = slugify(title)
 
 		// check if permalink already exists and checks against reserved routes
-		const permalinkExists = await Utils.Permalinks.validate(route)
+		const permalinkVerified = await Utils.Permalinks.validate(route)
 
-		if (permalinkExists) {
+		if (!permalinkVerified) {
 			route = `${route}2`
 		}
 
@@ -185,10 +186,10 @@ app.post("/addpost", async (req, res) => {
 		// finally go back and assign that permalink and meta to the newly created post
 		await db.Posts.updateOne({_id: owner}, {permalink, meta})
 
-		req.flash(
-			'admin_success',
-			'Post successfully added.'
-		)
+		const flash_type = permalinkVerified ? 'admin_success' : 'admin_warning'
+		const flash_message = permalinkVerified ? 'Post successfully created.' : 'Post successfully created however the provided permalink was already in use so it was modified.'
+
+		req.flash(flash_type, flash_message)
 		res.redirect(`/admin/posts/edit/${owner}`)
 
 	} catch (error) {
@@ -249,6 +250,13 @@ app.post("/updatepost", async (req, res) => {
 		// make sure route is in slug format
 		route = slugify(route)
 
+		// check if permalink already exists and checks against reserved routes
+		const permalinkVerified = await Utils.Permalinks.validate(route)
+
+		if (!permalinkVerified) {
+			route = `${route}2`
+		}
+
 		// update post in db
 		const updatedPost = await db.Posts.findOneAndUpdate({_id}, {active, blocks, content, forms, image, private, published, taxonomies, template, title, updated}, { "new": true})
 		const owner = updatedPost.id
@@ -264,10 +272,10 @@ app.post("/updatepost", async (req, res) => {
 		// finally update any links that use this post's route (that were created as a reference to an existing page)
 		await db.Links.updateMany({route: `/${originalRoute}`, is_ref: true}, {route: `/${updatedPermalink.full}`})
 
-		req.flash(
-			'admin_success',
-			'Post successfully updated.'
-		)
+		const flash_type = permalinkVerified ? 'admin_success' : 'admin_warning'
+		const flash_message = permalinkVerified ? 'Post successfully updated.' : 'Post successfully updated however the provided permalink was already in use so it was modified.'
+
+		req.flash(flash_type, flash_message)
 		res.redirect(redirect_url)
 
 	} catch (error) {
