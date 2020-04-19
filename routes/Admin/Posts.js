@@ -68,8 +68,9 @@ app.get("/admin/posts/add", async (req, res) => {
 
 	try {      
 		const templates = await Utils.Templates.getAll()
-		const taxonomies = await db.Taxonomies.find().lean()
 		const forms = await db.Forms.find().lean()
+		const taxonomies_query = await db.Taxonomies.find()
+		const taxonomies = taxonomies_query.map( (taxonomy) => taxonomy.toObject({ getters: true }) )
 
 		res.render("admin/add/post", {
 			forms,
