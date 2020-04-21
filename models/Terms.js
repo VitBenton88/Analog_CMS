@@ -13,7 +13,10 @@ const TermsSchema = new Schema({
 		ref: 'Taxonomies', 
 		required: true
 	},
-	associations: [{ type: Schema.ObjectId }]
+	associations: [{ 
+		type: Schema.ObjectId, 
+		ref: 'Posts' 
+	}]
 })
 
 // Create model using mongoose's model method
