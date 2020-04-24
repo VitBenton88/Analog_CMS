@@ -66,18 +66,6 @@ app.set('view engine', 'handlebars')
 // =============================================================
 app.use(cookieParser('keyboardCats'))
 
-// sets up the Express app to use session
-// =============================================================
-app.use(session({
-		secret: 'keyboardCats',
-		resave: true,
-		saveUninitialized: true,
-		rolling: true,
-		cookie: {
-		maxAge: 3600000
-	}
-}))
-
 // sets up Passport middleware
 // =============================================================
 app.use(passport.initialize())
