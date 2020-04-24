@@ -2,7 +2,7 @@ module.exports = (app, db) => {
 
 	// Pass menus to every route
 	// =============================================================
-	app.all('/*', async (req, res, next) => {
+	app.use('/*', async (req, res, next) => {
 		try {
 			const populate = {
 				path: 'submenu',
@@ -29,11 +29,10 @@ module.exports = (app, db) => {
 
 			// insert into express req object
 			req.menus = menusObj
-			// continue
-			next()
 
 		} catch (error) {
 			console.error(error)
+		} finally {
 			next()
 		}
 	})

@@ -2,19 +2,18 @@ module.exports = (app, db) => {
 
 	// Handle all redirect hits
 	// =============================================================
-	app.all('/*', async (req, res, next) => {
-		try {
-			const source = req.originalUrl;
-			const redirectFound = await db.Redirects.findOne({source, active: true})
+	app.get('/*', async (req, res, next) => {
+		const { url } = req
 
-			if (!redirectFound) {
+		try {
+			// lookup redirect and count a hit
+			const redirect = await db.Redirects.findOneAndUpdate( { source: url, active: true }, { $inc: {"hits": 1} } )
+
+			if (!redirect) {
 				return next()
 			}
 
-			const { _id, target, type } = redirectFound
-
-			// count a hit
-			await db.Redirects.update({_id}, {$inc: {"hits": 1}})
+			const { target, type } = redirect
 
 			// fire redirect
 			res.redirect(type, target)
