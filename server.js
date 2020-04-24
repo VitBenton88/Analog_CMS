@@ -1,4 +1,4 @@
-// Dependencies
+// dependencies
 // =============================================================
 const express = require("express")
 const bodyParser = require("body-parser")
@@ -17,6 +17,7 @@ const Recaptcha = require('express-recaptcha').RecaptchaV3
 const passport = require('passport')
 const path = require("path")
 const session = require('express-session')
+const MongoStore = require('connect-mongo')(session)
 const { ensureAuthenticated } = require('./config/auth')
 const slugify = require('url-slug')
 const validator = require('validator')
@@ -25,7 +26,7 @@ const validator = require('validator')
 // =============================================================
 const db = require("./models")
 
-// Passport Config
+// passport Config
 require('./config/passport')(passport)
 
 // load environment variables
@@ -36,7 +37,7 @@ dotenv.config()
 // =============================================================
 const production = process.env.NODE_ENV == "production"
 
-// Sets up the Express app
+// sets up the Express app
 // =============================================================
 const app = express()
 let PORT = process.env.PORT || 3000
@@ -49,7 +50,7 @@ app.use(fileUpload({
 	},
 }))
 
-// Handlebars Config
+// handlebars Config
 // =============================================================
 const hbs = exphbs.create({
 	defaultLayout: 'frontend',
@@ -77,25 +78,10 @@ app.use(session({
 	}
 }))
 
-// Sets up Passport middleware
+// sets up Passport middleware
 // =============================================================
 app.use(passport.initialize())
 app.use(passport.session())
-
-// Connect Flash and setup global variables to be passed into every view
-// =============================================================
-app.use(flash())
-app.use((req, res, next) => {
-	// admin messages
-	res.locals.admin_success = req.flash('admin_success')
-	res.locals.admin_warning = req.flash('admin_warning')
-	res.locals.admin_error = req.flash('admin_error')
-	// frontend messages
-	res.locals.success = req.flash('success')
-	res.locals.warning = req.flash('warning')
-	res.locals.error = req.flash('error')
-	next()
-})
 
 // sets up the Express app to handle data parsing
 // =============================================================
@@ -118,6 +104,7 @@ app.use(favicon(path.join(__dirname, 'public', 'assets/favicon.png')))
 // apply production settings
 // =============================================================
 if (production) {
+	console.log('Analog CMS running in production mode.')
 	// compress responses
 	app.use(compression())
 	// permit access to public file
@@ -127,13 +114,43 @@ if (production) {
 	// set proxy for identifying user's IP address
 	app.set('trust proxy', true)
 	// cache templates
-	app.enable('view cache');
+	app.enable('view cache')
+	// store sessions in mongodb
+	app.use(session({
+		saveUninitialized: true,
+		resave: true,
+		secret: 'keyboardCats',
+		store: new MongoStore( {url: process.env.MONGODB_URI || `mongodb://localhost/analog` } )
+	}))
 } else {
-	//load environment variables
-	dotenv.config()
 	// permit access to public file
 	app.use(express.static( path.join(__dirname, '/public') ))
+	// store session in default memory cache
+	app.use(session({
+		secret: 'keyboardCats',
+		resave: true,
+		saveUninitialized: true,
+		rolling: true,
+		cookie: {
+			maxAge: 3600000
+		}
+	}))
 }
+
+// connect Flash and setup global variables to be passed into every view
+// =============================================================
+app.use(flash())
+app.use((req, res, next) => {
+	// admin messages
+	res.locals.admin_success = req.flash('admin_success')
+	res.locals.admin_warning = req.flash('admin_warning')
+	res.locals.admin_error = req.flash('admin_error')
+	// frontend messages
+	res.locals.success = req.flash('success')
+	res.locals.warning = req.flash('warning')
+	res.locals.error = req.flash('error')
+	next()
+})
 
 // connect to the database
 // =============================================================
@@ -170,7 +187,7 @@ app.use( async (req, res) => {
 
 	try {
 		// update hit count in db
-		await db.PagesNotFound.update({ source: originalUrl }, { source: originalUrl, $inc: { "hits": 1 }}, { upsert: true })
+		await db.PagesNotFound.updateOne({ source: originalUrl }, { source: originalUrl, $inc: { "hits": 1 }}, { upsert: true })
 
 		res.status(404).render('templates/defaults/404', {
 			menus,
