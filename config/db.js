@@ -15,7 +15,6 @@ module.exports = {
 
         // connect
         mongoose.connect(MONGODB_URI, MONGODB_CONFIG)
-
         console.log(`Database connected @ ${MONGODB_URI}`)
     }
 }
