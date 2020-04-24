@@ -11,9 +11,11 @@ module.exports = (passport) => {
             try {
                 // default error message
                 const message = "Incorrect username or password."
+                // user can provide username or password
+                const user_params = { $or: [{ username }, { email: username }] }
 
                 // lookup user
-                const user = await db.Users.findOne({username})
+                const user = await db.Users.findOne(user_params)
                 // if user does not exist, reject
                 if (!user) {
                     return done(null, false, { message })
@@ -32,6 +34,7 @@ module.exports = (passport) => {
 
             } catch (error) {
                 console.error(error)
+                return done(null, false, { message: 'An error occurred while authenticating. Please try again later.' })
             }
         })
     )
