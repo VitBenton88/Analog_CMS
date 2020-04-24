@@ -66,11 +66,6 @@ app.set('view engine', 'handlebars')
 // =============================================================
 app.use(cookieParser('keyboardCats'))
 
-// sets up Passport middleware
-// =============================================================
-app.use(passport.initialize())
-app.use(passport.session())
-
 // sets up the Express app to handle data parsing
 // =============================================================
 app.use(bodyParser.json())
@@ -124,6 +119,11 @@ if (production) {
 		}
 	}))
 }
+
+// sets up Passport middleware
+// =============================================================
+app.use(passport.initialize())
+app.use(passport.session())
 
 // connect Flash and setup global variables to be passed into every view
 // =============================================================
