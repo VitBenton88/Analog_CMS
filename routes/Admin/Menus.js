@@ -23,7 +23,7 @@ module.exports = (app, db, slugify, Utils) => {
 			const skip = paged > 0 ? ((paged - 1) * limit) : 0
 
 			// get query count for pagination
-			const count = await db.Menus.find().count().lean()
+			const count = await db.Menus.find().countDocuments().lean()
 			const pageCount = Math.ceil(count / limit)
 			// setup query params
 			const sortConfig = orderBy ? Utils.Sort.getConfig(orderBy, sort) : {'created': 1}

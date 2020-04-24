@@ -26,7 +26,7 @@ app.get("/admin/posts", async (req, res) => {
 		const templates = await Utils.Templates.getAll()
 
 		// get query count for pagination
-		const count = await db.Posts.find().count().lean()
+		const count = await db.Posts.find().countDocuments().lean()
 		const pageCount = Math.ceil(count / limit)
 		// setup query params
 		const sortConfig = orderBy ? Utils.Sort.getConfig(orderBy, sort) : {'created': 1}

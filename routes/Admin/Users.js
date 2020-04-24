@@ -23,7 +23,7 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 			const skip = paged > 0 ? ((paged - 1) * limit) : 0
 
 			// get query count for pagination
-			const count = await db.Users.find().count().lean()
+			const count = await db.Users.find().countDocuments().lean()
 			const pageCount = Math.ceil(count / limit)
 			// setup query params
 			const sortConfig = orderBy ? Utils.Sort.getConfig(orderBy, sort) : {'created': 1}

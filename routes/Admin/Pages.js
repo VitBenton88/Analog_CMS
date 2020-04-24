@@ -26,7 +26,7 @@ module.exports = (app, db, slugify, Utils) => {
 			const templates = await Utils.Templates.getAll()
 
 			// get query count for pagination
-			const count = await db.Pages.find().count().lean()
+			const count = await db.Pages.find().countDocuments().lean()
 			const pageCount = Math.ceil(count / limit)
 			// setup query params
 			const sortConfig = orderBy ? Utils.Sort.getConfig(orderBy, sort) : {'created': 1}
