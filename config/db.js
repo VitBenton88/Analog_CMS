@@ -1,16 +1,20 @@
-// Dependencies
+// dependencies
 // =============================================================
 const mongoose = require("mongoose")
 
 module.exports = {
     connect: () => {
-        // Connect to the Mongo DB
-        // =============================================================
         const DB_NAME = "analog"
         const MONGODB_URI = process.env.MONGODB_URI || `mongodb://localhost/${DB_NAME}`
-        // Set mongoose to leverage built in JavaScript ES6 Promises
-        mongoose.Promise = Promise
-        mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
+        const MONGODB_CONFIG = {
+            useCreateIndex: true,
+            useFindAndModify: false,
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        }
+
+        // connect
+        mongoose.connect(MONGODB_URI, MONGODB_CONFIG)
 
         console.log(`Database connected @ ${MONGODB_URI}`)
     }
