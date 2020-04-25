@@ -120,7 +120,6 @@ module.exports = (app, db, Utils) => {
     // =============================================================
     app.post("/deleteentry", async (req, res) => {
         const { _id } = req.body
-        const redirect_url = '/admin/contact/entries'
 
         try {
             // setup db query params
@@ -134,13 +133,14 @@ module.exports = (app, db, Utils) => {
                 'admin_success',
                 'Entry successfully deleted.'
             )
-            res.redirect(redirect_url)
 
         } catch (error) {
             console.error(error)
             const errorMessage = error.errmsg || error.toString()
             req.flash('admin_error', errorMessage)
-            res.redirect(redirect_url)
+
+        } finally {
+            res.redirect('/admin/contact/entries')
         }
     })
 

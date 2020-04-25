@@ -97,7 +97,6 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 	app.post("/adduser", async (req, res) => {
 		const { body } = req
 		let { email, nickname, password, passwordCheck, role, username } = body
-		const redirect_url = '/admin/users'
 
 		try {
 			// basic validation
@@ -121,17 +120,15 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 			// create user in database
 			await db.Users.create({email, nickname, password, role, username})
 
-			req.flash(
-				'admin_success',
-				'User successfully added.'
-			)
-			res.redirect(redirect_url)
+			req.flash( 'admin_success', 'User successfully added.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirect_url)
+			
+		} finally {
+			res.redirect('/admin/users')
 		}
 	})
 
@@ -140,7 +137,6 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 	app.post("/edituserbasic", async (req, res) => {
 		const { body, user } = req
 		let { _id, email, image, nickname, role, username } = body
-		const redirect_url = `/admin/users/edit/${_id}?expand=basic`
 		const sessionUser = { role: user.role, username: user.username, _id: user._id }
 		// format image value  
 		image = image === '' ? null : image
@@ -169,11 +165,7 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 			// update user in database
 			await db.Users.updateOne({_id}, updateParams)
 
-			req.flash(
-				'admin_success',
-				'User info successfully updated.'
-			)
-			res.redirect(redirect_url)
+			req.flash( 'admin_success', 'User info successfully updated.' )
 
 		} catch (error) {
 			console.error(error)
@@ -191,7 +183,9 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 			}
 
 			req.flash('admin_error', errorMsg)
-			res.redirect(redirect_url)
+
+		} finally {
+			res.redirect(`/admin/users/edit/${_id}?expand=basic`)
 		}
 	})
 
@@ -199,7 +193,6 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 	// =============================================================
 	app.post("/edituserpassword", async (req, res) => {
 		let { _id, password, passwordCheck } = req.body
-		const redirect_url = `/admin/users/edit/${_id}`
 
 		try {
 			// basic validation
@@ -220,17 +213,15 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 			// update user in database
 			await db.Users.updateOne({_id}, {password})
 
-			req.flash(
-				'admin_success',
-				'User password successfully edited.'
-			)
-			res.redirect(redirect_url)
+			req.flash( 'admin_success', 'User password successfully edited.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirect_url)
+			
+		} finally {
+			res.redirect(`/admin/users/edit/${_id}`)
 		}
 	})
 
@@ -277,10 +268,7 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 
 			await db.Users.deleteOne({_id})
 
-			req.flash(
-				'admin_success',
-				'User successfully deleted.'
-			)
+			req.flash( 'admin_success', 'User successfully deleted.' )
 			res.redirect('/admin/users')
 
 		} catch (error) {

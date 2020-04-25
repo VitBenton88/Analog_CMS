@@ -20,7 +20,7 @@
                     <input name="name" type="text" class="form-control" id="taxonomyName" placeholder="Taxonomy Name" value="{{taxonomy.name}}">
                     <input name="_id" type="hidden" value="{{taxonomy._id}}">
                   </div>
-                  <button type="submit" class="btn btn-success">Submit</button>
+                  <button type="submit" class="btn btn-success">Update</button>
               </form>
             </div>
           </div>
@@ -33,7 +33,7 @@
                     <input name="name" type="text" class="form-control" id="termName" placeholder="Term Name">
                     <input name="_owner" type="hidden" value="{{taxonomy._id}}">
                   </div>
-                  <button type="submit" class="btn btn-info">Add</button>
+                  <button type="submit" class="btn btn-info">Create</button>
               </form>
             </div>
           </div>
@@ -50,7 +50,7 @@
                 {{/with}}
                 {{/each}}
               {{else}}
-              <p>No terms set for this taxonomy.</p>
+                <p>No terms set for this taxonomy.</p>
               {{/if}}
             </div>
           </div>
@@ -60,7 +60,7 @@
           <div class="row">
               <form action="/deletetaxonomy" method="POST" class="d-inline-block">
                   <input name="_id" type="hidden" value="{{taxonomy._id}}">
-                  <button type="submit" class="btn btn-outline-danger">Delete Taxonomy</button>
+                  <button type="submit" class="btn btn-danger btn-sm">Delete Taxonomy</button>
               </form>
           </div>
           

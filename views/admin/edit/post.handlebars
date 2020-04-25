@@ -99,9 +99,9 @@
             <input id="_image" name="image" type="hidden" value="{{post.image._id}}">
             <input name="originalRoute" type="hidden" value="{{post.permalink.full}}">
             <input name="_id" type="hidden" value="{{post._id}}">
-            <button type="submit" class="btn btn-outline-info">Update Post</button>
+            <button type="submit" class="btn btn-success btn-lg mr-3">Update Post</button>
             <a class="btn btn-outline-warning" href="/admin/posts" role="button">Cancel</a>
-            <a class="btn btn-primary" href="/{{post.permalink.route}}" target="_blank" role="button">View</a>
+            <a class="btn btn-outline-primary" href="/{{post.permalink.route}}" target="_blank" role="button">View</a>
           </form>
 
           <hr>
@@ -109,7 +109,7 @@
           <div class="row">
             <form action="/deletepost" method="POST" class="d-inline-block">
               <input name="_id" type="hidden" value="{{post._id}}">
-              <button type="submit" class="btn btn-danger">Delete Post</button>
+              <button type="submit" class="btn btn-danger btn-sm">Delete Post</button>
             </form>
           </div>
 

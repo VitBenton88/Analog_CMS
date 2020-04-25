@@ -32,7 +32,6 @@ module.exports = (app, db, Utils) => {
     // UPDATE SMTP - POST
     // =============================================================
     app.post("/updatesmtp", async (req, res) => {
-        const redirect_ul = '/admin/contact/settings?expand=smtp'
         let { host, _id, password, port, secure, user } = req.body
         secure = secure == "on" ? true : false
 
@@ -47,28 +46,24 @@ module.exports = (app, db, Utils) => {
             }
 
             const Query = _id.length ? db.Smtp.updateOne({ _id }, params) : db.Smtp.create(params)
-
             // fire query
             await Query
 
-            req.flash(
-                'admin_success',
-                'SMTP settings successfully updated.'
-            )
-            res.redirect(redirect_ul)
+            req.flash( 'admin_success', 'SMTP settings successfully updated.' )
 
         } catch (error) {
             console.error(error)
             const errorMessage = error.errmsg || error.toString()
             req.flash('admin_error', errorMessage)
-            res.redirect(redirect_ul)
+            
+        } finally {
+            res.redirect('/admin/contact/settings?expand=smtp')
         }
     })
 
     // SEND TEST SMTP EMAIL - POST
     // =============================================================
     app.post("/testsmtp", async (req, res) => {
-        const redirect_ul = '/admin/contact/settings'
         const emailTo = req.body.emailTo
 
         try {
@@ -87,17 +82,15 @@ module.exports = (app, db, Utils) => {
             // send
             await Utils.Smtp.send(mailData)
 
-            req.flash(
-                'admin_success',
-                'Test email successfully sent.'
-            )
-            res.redirect(redirect_ul)
+            req.flash( 'admin_success', 'Test email successfully sent.' )
 
         } catch (error) {
             console.error(error)
             const errorMessage = error.errmsg || error.toString()
             req.flash('admin_error', errorMessage)
-            res.redirect(redirect_ul)
+
+        } finally {
+            res.redirect('/admin/contact/settings')
         }
     })
 
@@ -132,32 +125,24 @@ module.exports = (app, db, Utils) => {
     // UPDATE RECAPTCHA - POST
     // =============================================================
     app.post("/updaterecaptcha", async (req, res) => {
-        const redirect_ul = '/admin/contact/settings?expand=recaptcha'
         let { _id, secret_key, site_key } = req.body
 
         try {
             // create db query
-            const params = {
-                secret_key,
-                site_key
-            }
-    
+            const params = { secret_key, site_key }
             const Query = _id.length ? db.Recaptcha.updateOne({ _id }, params) : db.Recaptcha.create(params)
-
             // fire query
             await Query
 
-            req.flash(
-                'admin_success',
-                'reCAPTCHA settings successfully updated.'
-            )
-            res.redirect(redirect_ul)
+            req.flash( 'admin_success', 'reCAPTCHA settings successfully updated.' )
 
         } catch (error) {
             console.error(error)
             const errorMessage = error.errmsg || error.toString()
             req.flash('admin_error', errorMessage)
-            res.redirect(redirect_ul)
+
+        } finally {
+            res.redirect('/admin/contact/settings?expand=recaptcha')
         }
     })
 

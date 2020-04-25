@@ -29,7 +29,6 @@ module.exports = (app, db, slugify) => {
 			const $push = { customFields: createdField._id }
 
 			const ownerQuery = isPage ? db.Pages.updateOne({ _id }, { $push }) : db.Posts.updateOne({ _id }, { $push })
-
 			await ownerQuery
 
 			res.json({

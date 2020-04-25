@@ -64,10 +64,7 @@ module.exports = (app, db, Utils) => {
 			await db.PagesNotFound.deleteMany({_id: {$in: list_id_arr} })
 
 			// Send user deletion success message
-			req.flash(
-				'admin_success',
-				'404s successfully deleted.'
-			)
+			req.flash( 'admin_success', '404s successfully deleted.' )
 			res.send(true)
 
 		} catch (error) {
@@ -81,24 +78,19 @@ module.exports = (app, db, Utils) => {
 	// DELETE 404 - POST
 	// =============================================================
 	app.post("/delete404", async (req, res) => {
-		const redirect_url = '/admin/pagesnotfound'
-
 		try {
 			// db query
 			await db.PagesNotFound.deleteOne({_id: req.body._id})
 
-			req.flash(
-				'admin_success',
-				'404 record successfully deleted.'
-			)
-
-			res.redirect(redirect_url)
+			req.flash( 'admin_success', '404 record successfully deleted.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirect_url)
+			
+		} finally {
+			res.redirect('/admin/pagesnotfound')
 		}
 	})
 

@@ -22,11 +22,7 @@ module.exports = (app, passport) => {
 	// =============================================================
 	app.post("/logout", (req, res) => {
 		req.logout()
-		req.flash(
-			'admin_success',
-			'Successfully logged out.'
-		)
-
+		req.flash( 'admin_success', 'Successfully logged out.' )
 		res.redirect('/login')
 	})
 

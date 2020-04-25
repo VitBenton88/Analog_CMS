@@ -127,18 +127,20 @@
             <input id="_image" name="image" type="hidden" value="{{page.image._id}}">
             <input name="_id" type="hidden" value="{{page._id}}">
             <input name="originalRoute" type="hidden" value="{{page_full_permalink}}">
-            <button type="submit" class="btn btn-outline-info">Update Page</button>
+            <button type="submit" class="btn btn-success btn-lg mr-3">Update Page</button>
             <a class="btn btn-outline-warning" href="/admin/pages" role="button">Cancel</a>
-            <a class="btn btn-primary" href="/{{page_full_permalink}}" target="_blank" role="button">View</a>
+            <a class="btn btn-outline-primary" href="/{{page_full_permalink}}" target="_blank" role="button">View</a>
           </form>
 
           <hr>
 
           <div class="row">
-            <form action="/deletepage" method="POST" class="d-inline-block">
-              <input name="_id" type="hidden" value="{{page._id}}">
-              <button type="submit" class="btn btn-danger">Delete Page</button>
-            </form>
+            <div class="col-12">
+              <form action="/deletepage" method="POST" class="d-inline-block">
+                <input name="_id" type="hidden" value="{{page._id}}">
+                <button type="submit" class="btn btn-danger btn-sm">Delete Page</button>
+              </form>
+            </div>
           </div>
 
         </div>

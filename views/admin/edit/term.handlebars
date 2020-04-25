@@ -20,7 +20,7 @@
                     <input name="name" type="text" class="form-control" id="termName" placeholder="Term Name" value="{{term.name}}">
                     <input name="_id" type="hidden" value="{{term._id}}">
                   </div>
-                  <button type="submit" class="btn btn-success">Submit</button>
+                  <button type="submit" class="btn btn-success btn-lg">Update</button>
               </form>
             </div>
           </div>
@@ -31,7 +31,7 @@
               <form action="/deleteterm" method="POST" class="d-inline-block">
                   <input name="_id" type="hidden" value="{{term._id}}">
                   <input name="_owner" type="hidden" value="{{term.owner}}">
-                  <button type="submit" class="btn btn-outline-danger">Delete Term</button>
+                  <button type="submit" class="btn btn-danger btn-sm">Delete Term</button>
               </form>
           </div>
           

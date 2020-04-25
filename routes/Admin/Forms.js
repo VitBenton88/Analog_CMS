@@ -112,10 +112,7 @@ module.exports = (app, db, slugify, Utils) => {
             // create form in db
             const newFrom = await db.Forms.create({ name, slug, fields, mail, settings })
 
-            req.flash(
-                'admin_success',
-                'Form successfully added.'
-            )
+            req.flash( 'admin_success', 'Form successfully added.' )
             res.status(200).json(newFrom)
 
         } catch (error) {
@@ -199,10 +196,7 @@ module.exports = (app, db, slugify, Utils) => {
             await db.Pages.updateMany({ forms }, { $pull: { forms } })
             await db.Posts.updateMany({ forms }, { $pull: { forms } })
 
-            req.flash(
-                'admin_success',
-                'Form successfully deleted.'
-            )
+            req.flash( 'admin_success', 'Form successfully deleted.' )
             res.status(200).end()
 
         } catch (error) {

@@ -60,7 +60,6 @@ module.exports = (app, db, Utils) => {
     // =============================================================
     app.post("/addredirect", async (req, res) => {
         let { active, type, source, target } = req.body
-        const redirect_url = '/admin/redirects'
 
         try {
             // some basic validation, make sure source and target are not identical
@@ -86,17 +85,15 @@ module.exports = (app, db, Utils) => {
             // create in db
             await db.Redirects.create({active, type, source, target})
 
-            req.flash(
-                'admin_success',
-                'Redirect successfully added.'
-            )
-            res.redirect(redirect_url)
+            req.flash( 'admin_success', 'Redirect successfully added.' )
 
         } catch (error) {
             console.error(error)
             const errorMessage = error.errmsg || error.toString()
             req.flash('admin_error', errorMessage)
-            res.redirect(redirect_url)
+
+        } finally {
+            res.redirect('/admin/redirects')
         }
     })
 
@@ -104,7 +101,6 @@ module.exports = (app, db, Utils) => {
     // =============================================================
     app.post("/updateredirect", async (req, res) => {
         let { _id, active, type, source, target } = req.body
-        const redirect_url = '/admin/redirects'
 
         try {
             // some basic validation, make sure source and target are not identical
@@ -130,17 +126,15 @@ module.exports = (app, db, Utils) => {
             // run db update query
             await db.Redirects.updateOne({_id}, {active, type, source, target, hits: 0})
 
-            req.flash(
-                'admin_success',
-                'Redirect successfully edited.'
-            )
-            res.redirect(redirect_url)
+            req.flash( 'admin_success', 'Redirect successfully edited.' )
             
         } catch (error) {
             console.error(error)
             const errorMessage = error.errmsg || error.toString()
             req.flash('admin_error', errorMessage)
-            res.redirect(redirect_url)
+
+        } finally {
+            res.redirect('/admin/redirects')
         }
     })
 
@@ -199,24 +193,21 @@ module.exports = (app, db, Utils) => {
     // DELETE REDIRECT - POST
     // =============================================================
     app.post("/deleteredirect", async (req, res) => {
-        const redirect_url = '/admin/redirects'
         const { _id } = req.body
         
         try {
             // delete in db
             await db.Redirects.deleteOne({ _id })
 
-            req.flash(
-                'admin_success',
-                'Redirect successfully deleted.'
-            )
-            res.redirect(redirect_url)
+            req.flash( 'admin_success', 'Redirect successfully deleted.' )
 
         } catch (error) {
             console.error(error)
             const errorMessage = error.errmsg || error.toString()
             req.flash('admin_error', errorMessage)
-            res.redirect(redirect_url)
+
+        } finally {
+            res.redirect('/admin/redirects')
         }
     })
 

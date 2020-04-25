@@ -47,7 +47,6 @@ module.exports = (app, db, Utils) => {
     app.post("/uploadmedia", async (req, res) => {
         const { files, site_data } = req
         const { type } = site_data.settings.storage
-        const redirect_url = '/admin/media'
 
         try {
             // basic validation
@@ -63,17 +62,15 @@ module.exports = (app, db, Utils) => {
             // upload media
             await Utils.Storage.write(files.media, site_data.settings.storage)
 
-            req.flash(
-                'admin_success',
-                'Media successfully added.'
-            )
-            res.redirect(redirect_url)
+            req.flash( 'admin_success', 'Media successfully added.' )
 
         } catch (error) {
             console.error(error)
             const errorMessage = error.errmsg || error.toString()
             req.flash('admin_error', errorMessage)
-            res.redirect(redirect_url)
+
+        } finally {
+            res.redirect('/admin/media')
         }
     })
 
@@ -81,7 +78,6 @@ module.exports = (app, db, Utils) => {
     // =============================================================
     app.post("/updatemedia", async (req, res) => {
         const { alt, caption, description, _id } = req.body
-        const redirect_url = '/admin/media'
 
         try {
             // prepare meta object for db 
@@ -89,17 +85,15 @@ module.exports = (app, db, Utils) => {
             // update media in db
             await db.Media.updateOne({_id}, {meta})
 
-            req.flash(
-                'admin_success',
-                'Media successfully updated.'
-            )
-            res.redirect(redirect_url)
+            req.flash( 'admin_success', 'Media successfully updated.' )
 
         } catch (error) {
             console.error(error)
             const errorMessage = error.errmsg || error.toString()
             req.flash('admin_error', errorMessage)
-            res.redirect(redirect_url)
+            
+        } finally {
+            res.redirect('/admin/media')
         }
     })
 

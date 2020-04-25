@@ -102,10 +102,7 @@ module.exports = (app, db, slugify, Utils) => {
 			// create in db
 			await db.Menus.create({name, slug})
 
-			req.flash(
-				'admin_success',
-				'Menu successfully added.'
-			)
+			req.flash( 'admin_success', 'Menu successfully added.' )
 			res.redirect(redirectUrl)
 
 		} catch (error) {
@@ -137,16 +134,14 @@ module.exports = (app, db, slugify, Utils) => {
 			// re-define redirct url
 			redirectUrl = `/admin/menus/edit/${slug}`
 
-			req.flash(
-				'admin_success',
-				'Menu successfully updated.'
-			)
-			res.redirect(redirectUrl)
+			req.flash( 'admin_success', 'Menu successfully updated.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
+			
+		} finally {
 			res.redirect(redirectUrl)
 		}
 	})
@@ -155,7 +150,6 @@ module.exports = (app, db, slugify, Utils) => {
 	// =============================================================
 	app.post("/addmenuitem", async (req, res) => {
 		let { _id, permalink, originalRoute, slug, target, text, reference, route } = req.body
-		const redirectUrl = `/admin/menus/edit/${slug}`
 
 		try {
 			// basic validation
@@ -175,17 +169,15 @@ module.exports = (app, db, slugify, Utils) => {
 			// add link to menu it belongs to
 			await db.Menus.updateOne({_id}, { $push: {links: createdLink._id} })
 
-			req.flash(
-				'admin_success',
-				'Menu item successfully added.'
-			)
-			res.redirect(redirectUrl)
+			req.flash( 'admin_success', 'Menu item successfully added.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirectUrl)
+
+		} finally {
+			res.redirect(`/admin/menus/edit/${slug}`)
 		}
 	})
 
@@ -193,7 +185,6 @@ module.exports = (app, db, slugify, Utils) => {
 	// =============================================================
 	app.post("/updatemenuitem", async (req, res) => {
 		let { _id, originalRoute, permalink, reference, slug, target, text, route } = req.body
-		const redirectUrl = `/admin/menus/edit/${slug}`
 
 		try {
 			// basic validation
@@ -212,17 +203,15 @@ module.exports = (app, db, slugify, Utils) => {
 			// update in db
 			await db.Links.updateOne({_id}, {is_ref, permalink, route, target, text})
 
-			req.flash(
-				'admin_success',
-				'Menu item successfully edited.'
-			)
-			res.redirect(redirectUrl)
+			req.flash( 'admin_success', 'Menu item successfully edited.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirectUrl)
+			
+		} finally {
+			res.redirect(`/admin/menus/edit/${slug}`)
 		}
 	})
 
@@ -254,7 +243,6 @@ module.exports = (app, db, slugify, Utils) => {
 	// =============================================================
 	app.post("/addsubmenu", async (req, res) => {
 		let { _id, originalRoute, owner, permalink, reference, slug, target, text, route } = req.body
-		const redirectUrl = `/admin/menus/edit/${slug}`
 
 		try {
 			// basic validation
@@ -276,17 +264,15 @@ module.exports = (app, db, slugify, Utils) => {
 			// add new link to its owner’s submenu array
 			await db.Links.updateOne({_id}, {$push: {submenu: _submenu}})
 
-			req.flash(
-				'admin_success',
-				'Submenu item successfully added.'
-			)
-			res.redirect(redirectUrl)
+			req.flash( 'admin_success', 'Submenu item successfully added.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirectUrl)
+
+		} finally {
+			res.redirect(`/admin/menus/edit/${slug}`)
 		}
 	})
 
@@ -318,7 +304,6 @@ module.exports = (app, db, slugify, Utils) => {
 	// =============================================================
 	app.post("/deletemenu", async (req, res) => {
 		const { _id } = req.body
-		const redirectUrl = '/admin/menus'
 
 		try {
 			// delete menu in db
@@ -326,17 +311,15 @@ module.exports = (app, db, slugify, Utils) => {
 			// delete all links this menu owned
 			await db.Links.deleteMany({owner: _id})
 
-			req.flash(
-				'admin_success',
-				'Menu successfully deleted.'
-			)
-			res.redirect(redirectUrl)
+			req.flash( 'admin_success', 'Menu successfully deleted.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirectUrl)
+			
+		} finally {
+			res.redirect('/admin/menus')
 		}
 	})
 
@@ -344,7 +327,6 @@ module.exports = (app, db, slugify, Utils) => {
 	// =============================================================
 	app.post("/deletemenuitem", async (req, res) => {
 		const { _id, slug } = req.body
-		const redirectUrl = `/admin/menus/edit/${slug}`
 
 		try {
 			// delete menu item in db
@@ -352,17 +334,15 @@ module.exports = (app, db, slugify, Utils) => {
 			// delete all links in this menu item’s submenu
 			await db.Links.deleteMany({_id: {$in: deletedLink.submenu} })
 
-			req.flash(
-				'admin_success',
-				'Menu item successfully deleted.'
-			)
-			res.redirect(redirectUrl)
+			req.flash( 'admin_success', 'Menu item successfully deleted.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirectUrl)
+			
+		} finally {
+			res.redirect(`/admin/menus/edit/${slug}`)
 		}
 	})
 
@@ -370,23 +350,20 @@ module.exports = (app, db, slugify, Utils) => {
 	// =============================================================
 	app.post("/deletesubmenuitem", async (req, res) => {
 		const { _id, slug, _submenu } = req.body
-		const redirectUrl = `/admin/menus/edit/${slug}`
 
 		try {
 			// pull menu item from menu
 			await db.Links.findByIdAndUpdate({_id}, {$pull: {submenu: _submenu}})
 
-			req.flash(
-				'admin_success',
-				'Submenu item successfully deleted.'
-			)
-			res.redirect(redirectUrl)
+			req.flash( 'admin_success', 'Submenu item successfully deleted.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirectUrl)
+
+		} finally {
+			res.redirect(`/admin/menus/edit/${slug}`)
 		}
 	})
 

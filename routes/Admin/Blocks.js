@@ -69,11 +69,11 @@ module.exports = (app, db, slugify, Utils) => {
 				layout: "admin"
 			})
 
-			} catch (error) {
-				console.error(error)
-				const errorMessage = error.errmsg || error.toString()
-				req.flash('admin_error', errorMessage)
-				res.redirect('/admin/content/blocks')
+		} catch (error) {
+			console.error(error)
+			const errorMessage = error.errmsg || error.toString()
+			req.flash('admin_error', errorMessage)
+			res.redirect('/admin/content/blocks')
 		}
 	})
 
@@ -96,10 +96,7 @@ module.exports = (app, db, slugify, Utils) => {
 			const createdBlock = await db.Blocks.create({ active, content, global, name, slug })
 			const _block = createdBlock.id
 
-			req.flash(
-				'admin_success',
-				'Block successfully added.'
-			)
+			req.flash( 'admin_success', 'Block successfully added.' )
 			res.redirect(`/admin/content/blocks/edit/${_block}`)
 
 		} catch (error) {
@@ -163,10 +160,7 @@ module.exports = (app, db, slugify, Utils) => {
 			// update block in db ...
 			await db.Blocks.updateOne({_id}, { active, content, global, name, slug })
 
-			req.flash(
-				'admin_success',
-				'Block successfully updated.'
-			)
+			req.flash( 'admin_success', 'Block successfully updated.' )
 			res.redirect(`/admin/content/blocks/edit/${_id}`)
 
 		} catch (error) {
@@ -217,11 +211,7 @@ module.exports = (app, db, slugify, Utils) => {
 
 			// if this is not a delete query, respond now with default success message
 			if (!deleteQuery) {
-				req.flash(
-					'admin_success',
-					'Bulk edit successful.'
-				)
-
+				req.flash( 'admin_success', 'Bulk edit successful.' )
 				return res.send(true)
 			}
 
@@ -229,11 +219,7 @@ module.exports = (app, db, slugify, Utils) => {
 			await db.Posts.updateMany({ blocks }, { $pull: {blocks} } )
 			await db.Pages.updateMany({ blocks }, { $pull: {blocks} } )
 
-			req.flash(
-				'admin_success',
-				'Blocks successfully deleted.'
-			)
-
+			req.flash( 'admin_success', 'Blocks successfully deleted.' )
 			res.send(true);
 
 		} catch (error) {

@@ -4,7 +4,6 @@ module.exports = (app, db) => {
     // =============================================================
     app.post("/addterm", async (req, res) => {
         const { name, _owner } = req.body
-        const redirect_url = req.header('Referer')
 
         try {
             // create term in db
@@ -12,17 +11,15 @@ module.exports = (app, db) => {
             // add new term to taxonomy it belongs to
             await db.Taxonomies.updateOne({_id: _owner}, {$push: {terms: term._id} })
     
-            req.flash(
-                'admin_success',
-                'Term successfully added.'
-            )
-            res.redirect(redirect_url)
+            req.flash( 'admin_success', 'Term successfully added.' )
 
         } catch (error) {
             console.error(error)
             const errorMessage = error.errmsg || error.toString()
             req.flash('admin_error', errorMessage)
-            res.redirect(redirect_url)
+
+        } finally {
+            res.redirect( req.header('Referer') )
         }
     })
 
@@ -55,23 +52,20 @@ module.exports = (app, db) => {
     // =============================================================
     app.post("/editterm", async (req, res) => {
         const { _id, name } = req.body
-        const redirect_url = `/admin/term/edit/${_id}`
 
         try {
             // update in db
             await db.Terms.updateOne({_id}, {name})
 
-            req.flash(
-                'admin_success',
-                'Term successfully edited.'
-            )
-            res.redirect(redirect_url)
+            req.flash( 'admin_success', 'Term successfully edited.' )
 
         } catch (error) {
             console.error(error)
             const errorMessage = error.errmsg || error.toString()
             req.flash('admin_error', errorMessage)
-            res.redirect(redirect_url)
+
+        } finally {
+            res.redirect(`/admin/term/edit/${_id}`)
         }
     })
 
@@ -88,10 +82,7 @@ module.exports = (app, db) => {
             // then pull from posts' list of terms
             await db.Posts.updateMany({taxonomies: {$in: _id} }, {$pull: {taxonomies: _id} })
 
-            req.flash(
-                'admin_success',
-                'Term successfully deleted.'
-            )
+            req.flash( 'admin_success', 'Term successfully deleted.' )
             res.redirect(`/admin/taxonomy/edit/${_owner}`)
 
         } catch (error) {

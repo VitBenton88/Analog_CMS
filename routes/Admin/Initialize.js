@@ -49,10 +49,7 @@ module.exports = (app, bcrypt, db) => {
             // instantiate new Analog schema instance
             await db.Analog.create({'settings.address': address, 'settings.description': description, 'settings.name': name})
 
-            req.flash(
-                'admin_success',
-                'Welcome to Analog CMS.'
-            )
+            req.flash( 'admin_success', 'Welcome to Analog CMS.' )
             res.redirect('/admin')
 
         } catch (error) {

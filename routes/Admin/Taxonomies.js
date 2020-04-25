@@ -59,23 +59,20 @@ module.exports = (app, db, Utils) => {
     // =============================================================
     app.post("/addtaxonomy", async (req, res) => {
         const { name } = req.body
-        const redirectUrl = "/admin/taxonomies"
 
         try {
             // create taxonomy in db
             await db.Taxonomies.create({name})
 
-            req.flash(
-                'admin_success',
-                'Taxonomy successfully added.'
-            )
-            res.redirect(redirectUrl)
+            req.flash( 'admin_success', 'Taxonomy successfully added.' )
 
         } catch (error) {
             console.error(error)
             const errorMessage = error.errmsg || error.toString()
             req.flash('admin_error', errorMessage)
-            res.redirect(redirectUrl)   
+
+        } finally {
+            res.redirect("/admin/taxonomies")
         }
     })
 
@@ -108,23 +105,20 @@ module.exports = (app, db, Utils) => {
     // =============================================================
     app.post("/edittaxonomy", async (req, res) => {
         const { _id, name } = req.body
-        const redirectUrl = `/admin/taxonomy/edit/${_id}`
 
         try {
             // update db
             await db.Taxonomies.updateOne({_id}, {name})
 
-            req.flash(
-                'admin_success',
-                'Taxonomy successfully edited.'
-            )
-            res.redirect(redirectUrl)
+            req.flash( 'admin_success', 'Taxonomy successfully edited.' )
             
         } catch (error) {
             console.error(error)
             const errorMessage = error.errmsg || error.toString()
             req.flash('admin_error', errorMessage)
-            res.redirect(redirectUrl)
+            
+        } finally {
+            res.redirect(`/admin/taxonomy/edit/${_id}`)
         }
     })
 
@@ -143,6 +137,7 @@ module.exports = (app, db, Utils) => {
 
             const taxonomies = await db.Taxonomies.find({ _id })
             const _deletedTaxonomyTerms = []
+
             for (let i = 0; i < taxonomies.length; i++) {
                 const terms = taxonomies[i].terms;
                 for (let j = 0; j < terms.length; j++) {
@@ -154,10 +149,7 @@ module.exports = (app, db, Utils) => {
 
             // if this isn't a bulk delete fire response here
             if (!deleteQuery) {
-                req.flash(
-                    'admin_success',
-                    'Bulk edit successful.'
-                )
+                req.flash( 'admin_success', 'Bulk edit successful.' )
 
                 return res.send(true);
             }
@@ -171,11 +163,7 @@ module.exports = (app, db, Utils) => {
             // then remove all references to deleted terms in posts
             await db.Posts.updateMany({ taxonomies: in_taxonomies }, { $pull: {taxonomies: in_taxonomies } })
 
-            req.flash(
-                'admin_success',
-                'Taxonomies successfully deleted.'
-            )
-
+            req.flash( 'admin_success', 'Taxonomies successfully deleted.' )
             res.send(true);
 
         } catch (error) {
@@ -213,11 +201,7 @@ module.exports = (app, db, Utils) => {
             // pull from posts' list of terms
             await db.Posts.updateMany({ taxonomies }, {$pull: { taxonomies } })
 
-            req.flash(
-                'admin_success',
-                'Taxonomy successfully deleted.'
-            )
-
+            req.flash( 'admin_success', 'Taxonomy successfully deleted.' )
             res.redirect("/admin/taxonomies")
 
         } catch (error) {

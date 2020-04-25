@@ -16,50 +16,22 @@ module.exports = (app, db, Utils) => {
 		})
 	})
 
-	// UPDATE META HEAD - POST
+	// UPDATE META - POST
 	// =============================================================
-	app.post("/updatemetahead", async (req, res) => {
-		const redirect_ul = '/admin/settings?expand=meta'
-		let { _id, meta_head } = req.body
+	app.post("/updatesitemeta", async (req, res) => {
+		let { _id, meta_body, meta_head } = req.body
 
 		try {
 			// db update query
-			await db.Analog.updateOne({_id}, {'settings.meta_head': meta_head})
+			await db.Analog.updateOne({_id}, {'settings.meta_body': meta_body, 'settings.meta_head': meta_head})
 
-			req.flash(
-				'admin_success',
-				'Meta head successfully updated.'
-			)
-			res.redirect(redirect_ul)
+			req.flash( 'admin_success', 'Meta successfully updated.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirect_ul)
-		}
-	})
-
-	// UPDATE META BODY - POST
-	// =============================================================
-	app.post("/updatemetabody", async (req, res) => {
-		const redirect_ul = '/admin/settings?expand=meta'
-		let { _id, meta_body } = req.body
-
-		try {
-			// db update query
-			await db.Analog.updateOne({_id}, {'settings.meta_body': meta_body})
-
-			req.flash(
-			'admin_success',
-			'Meta body successfully updated.'
-			)
-			res.redirect(redirect_ul)
-
-		} catch (error) {
-			console.error(error)
-			const errorMessage = error.errmsg || error.toString()
-			req.flash('admin_error', errorMessage)
+		} finally {
 			res.redirect(redirect_ul)
 		}
 	})
@@ -77,47 +49,40 @@ module.exports = (app, db, Utils) => {
 			// db update query
 			await db.Analog.updateOne({_id}, params)
 
-			req.flash(
-				'admin_success',
-				'Site information successfully updated.'
-			)
-			res.redirect(redirect_ul)
+			req.flash( 'admin_success', 'Site information successfully updated.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirect_ul)
+
+		} finally {
+			res.redirect('/admin/settings?expand=meta')
 		}
 	})
 
 	// UPDATE LOCAL STORAGE CONFIG - POST
 	// =============================================================
 	app.post("/updatelocalstorage", async (req, res) => {
-		const redirect_ul = '/admin/settings?expand=storage'
-
 		try {
 			// db update query
 			await db.Analog.updateOne({_id: req.body._id}, {'settings.storage.type': 'local'})
 
-			req.flash(
-			'admin_success',
-			'Site storage configuration successfully updated to local storage.'
-			)
-			res.redirect(redirect_ul)
+			req.flash( 'admin_success', 'Site storage configuration successfully updated to local storage.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirect_ul)
+
+		} finally {
+			res.redirect('/admin/settings?expand=storage')
 		}
 	})
 
 	// UPDATE GOOGLE CLOUD STORAGE CONFIG - POST
 	// =============================================================
 	app.post("/updategooglecloudstorage", async (req, res) => {
-		const redirect_ul = '/admin/settings?expand=storage'
 		let { _id, bucketName, projectId } = req.body
 
 		try {
@@ -135,24 +100,21 @@ module.exports = (app, db, Utils) => {
 			// db update query
 			await db.Analog.updateOne({_id}, params)
 
-			req.flash(
-				'admin_success',
-				'Site storage configuration successfully updated to Google Cloud Storage.'
-			)
-			res.redirect(redirect_ul)
+			req.flash( 'admin_success', 'Site storage configuration successfully updated to Google Cloud Storage.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirect_ul)
+
+		} finally {
+			res.redirect('/admin/settings?expand=storage')
 		}
 	})
 
 	// UPDATE AWS S3 CONFIG - POST
 	// =============================================================
 	app.post("/updateawsstorage", async (req, res) => {
-		const redirect_ul = '/admin/settings?expand=storage'
 		let { _id, accessKeyId, bucketName, secretAccessKey } = req.body
 
 		try {
@@ -171,17 +133,15 @@ module.exports = (app, db, Utils) => {
 			// db update query
 			await db.Analog.updateOne({_id}, params)
 
-			req.flash(
-				'admin_success',
-				'Site storage configuration successfully updated to AWS S3.'
-			)
-			res.redirect(redirect_ul)
+			req.flash( 'admin_success', 'Site storage configuration successfully updated to AWS S3.' )
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirect_ul)
+			
+		} finally {
+			res.redirect('/admin/settings?expand=storage')
 		}
 	})
 

@@ -232,8 +232,6 @@ app.post("/updatepost", async (req, res) => {
 		title
 	} = req.body
 
-	const redirect_url = `/admin/posts/edit/${_id}`
-
 	try {
 		// basic validation
 		if (!template || !title || !route) {
@@ -277,7 +275,6 @@ app.post("/updatepost", async (req, res) => {
 		const flash_message = permalinkVerified ? 'Post successfully updated.' : 'Post successfully updated however the provided permalink was already in use so it was modified.'
 
 		req.flash(flash_type, flash_message)
-		res.redirect(redirect_url)
 
 	} catch (error) {
 		console.error(error)
@@ -292,7 +289,9 @@ app.post("/updatepost", async (req, res) => {
 		}
 
 		req.flash('admin_error', errorMessage)
-		res.redirect(redirect_url)
+
+	} finally {
+		res.redirect(`/admin/posts/edit/${_id}`)
 	}
 })
 
@@ -324,11 +323,7 @@ app.post("/updatepostmulti", async (req, res) => {
 
 		// if this is not a delete query, respond here with appropriate success message
 		if (!deleteQuery) {
-			req.flash(
-				'admin_success',
-				'Bulk edit successful.'
-			)
-
+			req.flash( 'admin_success', 'Bulk edit successful.' )
 			return res.send(true)
 		}
 
@@ -340,11 +335,7 @@ app.post("/updatepostmulti", async (req, res) => {
 		// finally set any links that use the deleted posts' routes as a reference to inactive
 		await db.Links.updateMany({permalink: {$in: permalink_arr}, is_ref: true}, {active: false})
 
-		req.flash(
-			'admin_success',
-			'Posts successfully deleted.'
-		)
-
+		req.flash( 'admin_success', 'Posts successfully deleted.' )
 		res.send(true)
 
 	} catch (error) {
@@ -397,11 +388,7 @@ app.post("/deletepost", async (req, res) => {
 		// finally set any links that use this post's route as a reference to inactive
 		await db.Links.updateMany({permalink: deletedPost.permalink, is_ref: true}, {active: false})
 
-		req.flash(
-			'admin_success',
-			'Post successfully deleted.'
-		)
-
+		req.flash( 'admin_success', 'Post successfully deleted.' )
 		res.redirect('/admin/posts')
 
 	} catch (error) {

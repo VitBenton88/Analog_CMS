@@ -244,7 +244,6 @@ module.exports = (app, db, slugify, Utils) => {
 			title
 		} = req.body
 
-		const redirect_url = `/admin/pages/edit/${_id}`
 		route = title ? slugify(title) : undefined
 
 		try {
@@ -287,7 +286,6 @@ module.exports = (app, db, slugify, Utils) => {
 			const flash_message = permalinkVerified ? 'Page successfully updated.' : 'Page successfully updated however the provided permalink was already in use so it was modified.'
 
 			req.flash(flash_type, flash_message)
-			res.redirect(redirect_url)
 
 		} catch (error) {
 			console.error(error)
@@ -304,7 +302,9 @@ module.exports = (app, db, slugify, Utils) => {
 			}
 
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirect_url)
+
+		} finally {
+			res.redirect(`/admin/pages/edit/${_id}`)
 		}
 	})
 
@@ -336,17 +336,12 @@ module.exports = (app, db, slugify, Utils) => {
 
 			// define db query based on update criteria
 			const Query = deleteQuery ? db.Pages.deleteMany({ _id }) : db.Pages.updateMany({ _id }, { $set })
-
 			// conduct bulk edit of pages in db ...
 			await Query
 
 			// if this is not a delete query, respond now with default success message
 			if (!deleteQuery) {
-				req.flash(
-					'admin_success',
-					'Bulk edit successful.'
-				)
-
+				req.flash( 'admin_success', 'Bulk edit successful.' )
 				return res.send(true)
 			}
 
@@ -357,11 +352,7 @@ module.exports = (app, db, slugify, Utils) => {
 			// finally set any links that use the deleted posts' routes as a reference to inactive
 			await db.Links.updateMany({permalink: {$in: permalink_arr}, is_ref: true}, {active: false})
 
-			req.flash(
-				'admin_success',
-				'Pages successfully deleted.'
-			)
-
+			req.flash( 'admin_success', 'Pages successfully deleted.' )
 			res.send(true)
 
 		} catch (error) {
@@ -412,10 +403,7 @@ module.exports = (app, db, slugify, Utils) => {
 			// finally set any links that use this page's route as a reference to inactive
 			await db.Links.updateMany({permalink: deletedPage.permalink, is_ref: true}, {active: false})
 
-			req.flash(
-				'admin_success',
-				'Page successfully deleted.'
-			)
+			req.flash( 'admin_success', 'Page successfully deleted.' )
 			res.redirect('/admin/pages')
 
 		} catch (error) {
