@@ -5,6 +5,10 @@ module.exports = (app, passport) => {
 	app.get("/login", (req, res) => {
 		const { site_data } = req
 
+		if ( req.isAuthenticated() ) {
+			return res.redirect('/admin/dashboard')
+		}
+
 		res.render("templates/defaults/login", {
 			site_data,
 			layout: "login"
@@ -22,7 +26,7 @@ module.exports = (app, passport) => {
 	// =============================================================
 	app.post("/logout", (req, res) => {
 		req.logout()
-		req.flash( 'admin_success', 'Successfully logged out.' )
+		req.flash( 'success', 'Successfully logged out.' )
 		res.redirect('/login')
 	})
 
