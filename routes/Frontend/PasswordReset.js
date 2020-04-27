@@ -80,7 +80,7 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 			}
 
 			req.flash(
-				'admin_success',
+				'success',
 				`A link to reset your password has been sent to <b>${email}</b>.<em> This link will expire in 15 minutes</em>.`
 			)
 
@@ -136,7 +136,7 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 			await db.PasswordToken.deleteOne({token})
 
 			req.flash(
-				'admin_success',
+				'success',
 				'Password successfully updated.'
 			)
 
