@@ -3,8 +3,8 @@ module.exports = (app, db, slugify, Utils) => {
 // POSTS - GET
 // =============================================================
 app.get("/admin/posts", async (req, res) => {
-	const { body, query, site_data, user } = req
-	let { limit, orderBy, paged, search, sort } = query
+	const { body, originalUrl, query, site_data, user } = req
+	let { limit, orderBy, paged, search, sort, terms } = query
 	const { _id, role, username } = user
 	const sessionUser = { username, _id, role }
 
@@ -22,24 +22,42 @@ app.get("/admin/posts", async (req, res) => {
 		//determine offset in query by current page in pagination
 		const skip = paged > 0 ? ((paged - 1) * limit) : 0
 
+		// make sure terms are always in array format
+		if (terms) {
+			terms = terms.includes(",") ? terms.split(",") : [terms]
+		}
+
 		// get templated for user to select
 		const templates = await Utils.Templates.getAll()
+
+		// get taxonomies for filtering
+		const taxonomies_query = await db.Taxonomies.find()
+		const taxonomies = taxonomies_query.map( (taxonomy) => taxonomy.toObject({ getters: true }) )
 
 		// get query count for pagination
 		const count = await db.Posts.find().countDocuments().lean()
 		const pageCount = Math.ceil(count / limit)
 		// setup query params
 		const sortConfig = orderBy ? Utils.Sort.getConfig(orderBy, sort) : {'created': 1}
-		const searchParams = search ? {$text: {$search: search} } : {}
+		const findParams = {}
+
+		if (search) {
+			findParams['$text'] = { $search: search }
+		}
+
+		if (terms) {
+			findParams['taxonomies'] = { $in: terms }
+		}
 
 		// query db
-		const posts = await db.Posts.find(searchParams).sort(sortConfig).skip(skip).limit(limit).populate('permalink').lean()
+		const posts = await db.Posts.find(findParams).sort(sortConfig).skip(skip).limit(limit).populate('permalink').lean()
 		// swap sort after the query if there is an order requested, e.g. desc to asc
 		sort = orderBy ? Utils.Sort.swapOrder(sort) : null
 
 		res.render("admin/posts", {
 			limit,
 			orderBy,
+			originalUrl,
 			pageCount,
 			paged,
 			posts,
@@ -47,7 +65,9 @@ app.get("/admin/posts", async (req, res) => {
 			sessionUser,
 			site_data,
 			sort,
+			taxonomies,
 			templates,
+			terms,
 			layout: "admin"
 		})
 

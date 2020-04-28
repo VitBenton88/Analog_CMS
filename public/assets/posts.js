@@ -1,0 +1,1 @@
+"use strict";$(".taxonomy-filter").on("focusin",function(){var t=$(this),a=t.val();return a&&t.data("pre",a),!1}),$(".taxonomy-filter").change(function(){var t=$(this),a=t.val(),n=a;if(!t.data("pre")&&-1<window.location.search.indexOf("terms=")){var o=window.location.href,i=new URL(o).searchParams.get("terms");i&&i!=a&&(n=i+","+a)}window.location="/admin/posts?terms="+n});

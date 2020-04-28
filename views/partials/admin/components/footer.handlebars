@@ -39,8 +39,13 @@
     {{~/has~}}
 
     {{~#has originalUrl '/admin/contact/settings'}}
-    <!--minified form builder react JS files -->
+    <!--minified settings JS files -->
     <script src="/assets/contact.js"></script>
+    {{~/has~}}
+
+    {{~#has originalUrl '/admin/posts'}}
+    <!--minified posts JS files -->
+    <script src="/assets/posts.js"></script>
     {{~/has~}}
 
 </body>

@@ -33,6 +33,41 @@
               {{/if}}
             </div>
 
+            {{#if taxonomies}}
+              <!-- Taxonomies filters -->
+              <div class="col-12 mt-5 mb-4">
+                <div class="row">
+
+                  <div class="col-12">
+                    <p>Filter by taxonomy</p>
+                  </div>
+                  
+                  {{#each taxonomies}}
+                  {{#with this}}
+                    <div class="form-group col-6 col-md-3">
+                      <label for="select-taxonomy-{{_id}}">{{name}}</label>
+                      <select id="select-taxonomy-{{_id}}" class="form-control taxonomy-filter">
+                        <option hidden disabled value selected>Select Term</option>
+                        {{#if terms}}
+                          {{#each terms}}
+                          {{#with this}}
+                            <option{{inArray ../../terms _id 0 " selected"}} value="{{_id}}">{{name}}</option>
+                          {{/with}}
+                          {{/each}}
+                        {{/if}}
+                      </select>
+                    </div>
+                  {{/with}}
+                  {{/each}}
+
+                  <div class="col-12">
+                    <hr>
+                  </div>
+
+                </div>
+              </div>
+            {{/if}}
+
             {{#if posts}}
               <div class="col-12">
                 <!-- Select criteria for multi update -->
@@ -64,6 +99,7 @@
                 <button id="submit_list_multi_edit" data-url="/updatepostmulti" type="button"
                   class="btn btn-primary btn-sm" disabled>Submit</button>
               </div>
+
             {{/if}}
 
             {{#if posts}}
