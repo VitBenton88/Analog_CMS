@@ -12,9 +12,13 @@
 
         <div class="container page-body">
 
-          {{> admin/components/accordian name='basic' title='Basic Information' style="warning" content="admin/pages/edit/user/basic" expanded=true}}
+          {{> admin/components/accordian name='basic' title='Basic Information' style="primary" content="admin/pages/edit/user/basic" expanded=true}}
 
           {{> admin/components/accordian name='password' title='Password' style="info" content="admin/pages/edit/user/password"}}
+          
+          {{#eq sessionUser.username user.username}}
+            {{> admin/components/accordian name='mfa' title='Two-factor Authentication' style="success" content="admin/pages/edit/user/mfa"}}
+          {{/eq}}
 
           <hr>
 
@@ -28,7 +32,7 @@
           </div>
           {{/has}}
           
-        </div>
+        </div> 
 
       </div>
     </div>

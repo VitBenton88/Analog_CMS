@@ -11,7 +11,6 @@ module.exports = {
 	Meta: require("./Meta"),
 	PagesNotFound: require("./PagesNotFound"),
 	Pages: require("./Pages"),
-	PasswordToken: require("./PasswordToken"),
 	Permalinks: require("./Permalinks"),
 	Posts: require("./Posts"),
 	Recaptcha: require("./Recaptcha"),
@@ -19,5 +18,6 @@ module.exports = {
 	Smtp: require("./Smtp"),
 	Taxonomies: require("./Taxonomies"),
 	Terms: require("./Terms"),
+	Tokens: require("./Tokens"),
 	Users: require("./Users")
 }

@@ -64,7 +64,7 @@
                 <small id="templateHelp" class="form-text text-muted">Select a template for this post.</small>
                 <select class="custom-select" name="template" aria-describedby="templateHelp">
                   {{#each templates}}
-                  <option value="{{this}}" {{#eq ../post.template this}} selected="selected" {{/eq}}>{{this}}</option>
+                    <option value="{{this}}" {{#eq ../post.template this}} selected="selected" {{/eq}}>{{this}}</option>
                   {{/each}}
                   <option value="defaults/post" {{#eq post.template 'defaults/post'}} selected="selected" {{/eq}}>
                     Default Post Template</option>

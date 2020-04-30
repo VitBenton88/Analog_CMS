@@ -1,26 +1,27 @@
 <div class="row">
     <div class="col-12 col-lg-8 col-xl-6">
         <div class="row custom-fields-notifications"></div>
-        <form action="/edituserbasic" method="POST" id="edituser" enctype="multipart/form-data" autocomplete="off">
+        {{#with user}}
+        <form action="/edituserbasic" method="POST" id="edituserbasic" enctype="multipart/form-data" autocomplete="off" class="user-update-form">
             <div class="form-group">
                 <label for="username">User's username.</label>
-                <input name="username" type="text" id="username" class="form-control" placeholder="Username ..." value="{{user.username}}" autocomplete="off">
+                <input name="username" type="text" id="username" class="form-control" placeholder="Username ..." value="{{username}}" autocomplete="off">
             </div>
             <div class="form-group">
                 <label for="email">User's email.</label>
-                <input name="email" type="email" id="email" class="form-control" placeholder="Email ..." value="{{user.email}}">
+                <input name="email" type="email" id="email" class="form-control" placeholder="Email ..." value="{{email}}">
             </div>
             <div class="form-group">
                 <label for="email">User's nickname.</label>
-                <input name="nickname" type="text" id="nickname" class="form-control" placeholder="Nickname ..." value="{{user.nickname}}">
+                <input name="nickname" type="text" id="nickname" class="form-control" placeholder="Nickname ..." value="{{nickname}}">
             </div>
-            {{#eq sessionUser.role "Administrator"}}
+            {{#eq ../sessionUser.role "Administrator"}}
                 <div class="form-group">
                     <label for="role">User's role.</label>
                     <select name="role" class="form-control custom-select" id="role">
-                        <option value="Administrator"{{#eq user.role "Administrator"}} selected{{/eq}}>Administrator</option>
-                        <option value="User"{{#eq user.role "User"}} selected{{/eq}}>User</option>
-                        <option value="Visitor"{{#eq user.role "Visitor"}} selected{{/eq}}>Visitor</option>
+                        <option value="Administrator"{{#eq role "Administrator"}} selected{{/eq}}>Administrator</option>
+                        <option value="User"{{#eq role "User"}} selected{{/eq}}>User</option>
+                        <option value="Visitor"{{#eq role "Visitor"}} selected{{/eq}}>Visitor</option>
                     </select>
                 </div>
             {{/eq}}
@@ -28,16 +29,17 @@
             <div class="form-group">
 
                 {{> admin/components/thumbnail-upload 
-                image=user.image 
-                id=user._id 
+                image=image 
+                id=_id 
                 delurl='/deleteuserimage'
                 caption='User Image'}}
 
             </div>
 
-            <input id="_image" name="image" type="hidden" value="{{user.image._id}}">
-            <input name="_id" type="hidden" value="{{user._id}}">
+            <input id="_image" name="image" type="hidden" value="{{image._id}}">
+            <input name="_id" type="hidden" value="{{_id}}">
             <button type="submit" class="btn btn-primary btn-lg">Update</button>
         </form>
+        {{/with}}
     </div>
 </div>

@@ -1,4 +1,4 @@
-module.exports = (app, bcrypt, db, slugify, Utils, validator) => {
+module.exports = (app, bcrypt, db, GoogleAuthenticator, slugify, Utils, validator) => {
 	require("./404s.js")(app, db, Utils)
 	require("./Blocks.js")(app, db, slugify, Utils)
 	require("./Contact.js")(app, db, Utils)
@@ -15,6 +15,6 @@ module.exports = (app, bcrypt, db, slugify, Utils, validator) => {
 	require("./Summernote.js")(app, Utils)
 	require("./Taxonomies.js")(app, db, Utils)
 	require("./Terms.js")(app, db)
-	require("./Users.js")(app, bcrypt, db, Utils, validator)
+	require("./Users.js")(app, bcrypt, db, GoogleAuthenticator, Utils, validator)
 	require("./Settings.js")(app, db, Utils)
 }

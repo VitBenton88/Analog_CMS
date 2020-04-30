@@ -4,11 +4,10 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 	// =============================================================
 	app.get("/password/forgot", (req, res) => {
 		const { site_data } = req
-		const forgotPassword = true
 
 		res.render("templates/defaults/password/forgot", {
 			site_data,
-			forgotPassword,
+			forgotPassword: true,
 			layout: "login"
 		})
 	})
@@ -18,18 +17,21 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 	app.get("/password/reset", async (req, res, next) => {
 		const { site_data, query } = req
 		const { token } = query
-		const resetPassword = true
 
 		try {
-			const token_exists = await db.PasswordToken.findOne({token})
+			if (!token) {
+				return next()
+			}
 
-			if (!token || !token_exists) {
+			const token_exists = await db.Tokens.findOne({token, type: "passwordreset"})
+
+			if (!token_exists) {
 				return next()
 			}
 
 			res.render("templates/defaults/password/reset", {
 				site_data,
-				resetPassword,
+				resetPassword: true,
 				token,
 				layout: "login"
 			})
@@ -46,10 +48,10 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 	// =============================================================
 	app.post("/forgotpassword", async (req, res) => {
 		try {
-			const { body, site_data } = req
+			const { body, headers, protocol, site_data } = req
 			const { email } = body
 			const site_name = site_data.settings.name || "a site powered by Analog CMS."
-			const site_url = site_data.settings.address || `${req.protocol}://${req.headers.host}`
+			const site_url = site_data.settings.address || `${protocol}://${headers.host}`
 
 			// validate
 			if ( !email || !validator.isEmail(email) ) {
@@ -63,7 +65,7 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 				// create an access token
 				const user_id = user._id
 				const token = Utils.Password.generate(true, true, true, false, 24)
-				await db.PasswordToken.create({user_id, token})
+				await db.Tokens.create({user_id, token, type: "passwordreset"})
 				const pass_reset_url = `${site_url}/password/reset?token=${token}`
 
 				// send email
@@ -73,7 +75,7 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 					text: `This is a request to reset the password for the account associated with the email "${email}" for ${site_name}. Please visit this URL to reset your password: ${pass_reset_url}`,
 					html: `<p>This is a request to reset the password for the account associated with the email "${email}" for ${site_name}.</p>
 					<a href="${pass_reset_url}">Click Here to Reset Password.</a>
-					<p>Please note that this link will expire in 15 minutes.</p>`
+					<p>Please note that this link will expire in 10 minutes.</p>`
 				}
 
 				await Utils.Smtp.send(mailData)
@@ -81,7 +83,7 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 
 			req.flash(
 				'success',
-				`A link to reset your password has been sent to <b>${email}</b>.<em> This link will expire in 15 minutes</em>.`
+				`A link to reset your password has been sent to <b>${email}</b>.<em> This link will expire in 10 minutes</em>.`
 			)
 
 		} catch (error) {
@@ -116,7 +118,7 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 			}
 
 			// lookup token info
-			const token_info = await db.PasswordToken.findOne({token})
+			const token_info = await db.Tokens.findOne({token, type: "passwordreset"})
 
 			if (!token || !token_info) {
 				throw new Error('Something went wrong. No token found')
@@ -133,12 +135,9 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 			await db.Users.updateOne({_id}, {password})
 
 			// delete token in db
-			await db.PasswordToken.deleteOne({token})
+			await db.Tokens.deleteOne({token, type: "passwordreset"})
 
-			req.flash(
-				'success',
-				'Password successfully updated.'
-			)
+			req.flash('success', 'Password successfully updated.')
 
 			res.redirect('/login')
 

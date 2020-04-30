@@ -10,6 +10,7 @@ const exphbs = require('express-handlebars')
 const favicon = require('serve-favicon')
 const fileUpload = require('express-fileupload')
 const flash = require('connect-flash')
+const GoogleAuthenticator = require('passport-2fa-totp').GoogeAuthenticator
 const helpers = require('handlebars-helpers')()
 const analogHelpers = require('./config/handlebarsHelpers.js')
 const database = require('./config/db')
@@ -166,7 +167,7 @@ require("./routes/Frontend")(app, bcrypt, db, passport, Recaptcha, Utils, valida
 
 // import Admin Routes
 // =============================================================
-require("./routes/Admin")(app, bcrypt, db, slugify, Utils, validator)
+require("./routes/Admin")(app, bcrypt, db, GoogleAuthenticator, slugify, Utils, validator)
 
 // setup 404 handling
 // =============================================================
@@ -191,5 +192,5 @@ app.use( async (req, res) => {
 // starts the server to begin listening
 // =============================================================
 app.listen(PORT, () => {
-	console.log(`Analog server starting, listening on PORT ${PORT}`)
+	console.log(`Analog CMS server starting, listening on PORT ${PORT}`)
 })

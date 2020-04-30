@@ -1,4 +1,4 @@
-module.exports = (app, bcrypt, db, Utils, validator) => {
+module.exports = (app, bcrypt, db, GoogleAuthenticator, Utils, validator) => {
 
 	// USERS PAGE - GET
 	// =============================================================
@@ -58,7 +58,7 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 	// UPDATE USER PAGE - GET
 	// =============================================================
 	app.get("/admin/users/edit/:id", async (req, res) => {
-		let { params, query, site_data } = req
+		let { originalUrl, params, query, site_data } = req
 		const { id } = params
 		const { expand } = query
 		const session_user = req.user
@@ -78,6 +78,7 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 
 			res.render("admin/edit/user", {
 				expand,
+				originalUrl,
 				site_data,
 				user,
 				sessionUser,
@@ -144,7 +145,7 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 		try {
 			// basic validation
 			if (!username || !email || !role) {
-				throw new Error('Please fill out all fields when editing user.')
+				throw new Error('Please fill out all fields when updated user.')
 			}
 
 			// prevent last admin from losing admin privileges ...
@@ -213,7 +214,7 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 			// update user in database
 			await db.Users.updateOne({_id}, {password})
 
-			req.flash( 'admin_success', 'User password successfully edited.' )
+			req.flash( 'admin_success', 'User password successfully updated.' )
 
 		} catch (error) {
 			console.error(error)
@@ -222,6 +223,51 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 			
 		} finally {
 			res.redirect(`/admin/users/edit/${_id}`)
+		}
+	})
+
+	// UPDATE MFA CONFIG - POST
+	// =============================================================
+	app.post("/createusermfa", async (req, res) => {
+		const { _id, username } = req.user
+
+        try {
+			const registerGoogleAuthenticator = GoogleAuthenticator.register(username)
+			const { secret, qr } = registerGoogleAuthenticator
+			await db.Users.updateOne({ _id }, { 'mfa.secret': secret, 'mfa.enabled': true })
+
+			const response = {
+				message: "Google authenticator registration successful.<br/><b>Please scan the barcode below with the Google Authenticator app.</b>", 
+				qr
+			}
+			// respond to client
+			res.status(200).json(response)
+            
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({
+                "response": error,
+                "message": "Error occurred while registering for Google authenticator."
+            })
+        }
+	})
+
+	// DISABLE MFA - POST
+	// =============================================================
+	app.post("/removeusermfa", async (req, res) => {
+		const { _id } = req.user
+
+        try {
+			await db.Users.updateOne({ _id }, { 'mfa.secret': '', 'mfa.enabled': false })
+			req.flash( 'admin_success', 'User password successfully updated.' )
+            
+		} catch (error) {
+			console.error(error)
+			const errorMessage = error.errmsg || error.toString()
+			req.flash('admin_error', errorMessage)
+			
+		} finally {
+			res.redirect(`/admin/users/edit/${_id}?expand=mfa`)
 		}
 	})
 

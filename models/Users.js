@@ -5,10 +5,12 @@ const Schema = mongoose.Schema
 const UsersSchema = new Schema({
 	username: {
 		type: String,
+		required: true,
 		unique: true
 	},
 	email: {
 		type: String,
+		required: true,
 		unique: true
 	},
 	image: {
@@ -21,10 +23,21 @@ const UsersSchema = new Schema({
 	},
 	password: {
 		type: String,
+		required: true,
 		trim: true
+	},
+	mfa: {
+		enabled: {
+			type: Boolean,
+			default: false
+		},
+		secret: {
+			type: String
+		}
 	},
 	role: {
 		type: String,
+		required: true,
 		default: 'Visitor'
 	},
 	created: {
