@@ -59,7 +59,7 @@ module.exports = (passport) => {
             done(null, user)
         } catch (error) {
             console.error(error)
-            done(null, false, { message: "Incorrect one-time password." })
+            done(null, false, { message: "An error occurred while signing-out." })
         }
     })
     
