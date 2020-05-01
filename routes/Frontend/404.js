@@ -1,6 +1,6 @@
 module.exports = (app) => {
 
-	// Render Maintenance Page If Needed
+	// Render 404 Page
 	// =============================================================
 	app.all(['/Error404', '404'], async (req, res, next) => {
         const { menus, site_data } = req
