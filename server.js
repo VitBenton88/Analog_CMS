@@ -172,16 +172,12 @@ require("./routes/Admin")(app, bcrypt, db, GoogleAuthenticator, slugify, Utils, 
 // setup 404 handling
 // =============================================================
 app.use( async (req, res) => {
-	const { menus, originalUrl, site_data } = req
+	const { originalUrl } = req
 
 	try {
 		// update hit count in db
 		await db.PagesNotFound.updateOne({ source: originalUrl }, { source: originalUrl, $inc: { "hits": 1 }}, { upsert: true })
-
-		res.status(404).render('templates/defaults/404', {
-			menus,
-			site_data
-		})
+		res.redirect('/Error404')
 
 	} catch (error) {
 		console.error(error)
