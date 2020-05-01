@@ -108,7 +108,7 @@ module.exports = (app, bcrypt, db, passport, Utils) => {
 				throw new Error(token_err_msg)
 			}
 
-			const token_exists = await db.Tokens.findOne({token, type: "mfa"}).populate('user_id')
+			const token_exists = await db.Tokens.findOne({token, type: "mfa"}).populate('user_id').lean()
 
 			if (!token_exists) {
 				throw new Error(token_err_msg)
