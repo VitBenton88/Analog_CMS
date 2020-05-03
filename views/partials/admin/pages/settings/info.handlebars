@@ -12,7 +12,8 @@
 
     <div class="form-group">
         <label for="site_address">Site Address (URL)</label>
-        <input name="address" id="site_address" class="form-control" type="text" placeholder="https://www ..." rows="6" value="{{settings.address}}">
+        <input name="address" id="site_address" class="form-control" type="text" placeholder="https://www ..." aria-describedby="site_address_help" value="{{settings.address}}">
+        <small id="site_address_help" class="form-text text-muted">e.g. https://www.example.com</small>
     </div>
 
     <div class="custom-control custom-switch mt-4 mb-4 maintenance-checkbox">
