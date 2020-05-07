@@ -2,7 +2,7 @@
 
 <div class="row">
   <h5>Add User</h4>
-    <form action="/adduser" method="POST" id="adduser">
+    <form action="/adduser" method="POST" id="adduser" autocomplete="off">
       <div class="form-row">
         <div class="col-12 col-lg-3 form-group">
           <label for="new_username">New user's username.</label>
@@ -20,12 +20,12 @@
       <div class="form-row">
         <div class="col-12 col-lg-3 form-group">
           <label for="new_password">New user's password.</label>
-          <input name="password" type="password" id="new_password" class="form-control password_target" placeholder="Password">
+          <input name="password" type="password" id="new_password" class="form-control password_target" placeholder="Password" autocomplete="new-password">
           <small class="form-text text-muted password_helper">Password: <input type="text" readonly></small>
         </div>
         <div class="col-12 col-lg-3 form-group">
           <label for="new_password_verify">Re-type password.</label>
-          <input name="passwordCheck" type="password" id="new_password_verify" class="form-control verify_password_target" placeholder="Retype Password ...">
+          <input name="passwordCheck" type="password" id="new_password_verify" class="form-control verify_password_target" placeholder="Retype Password ..." autocomplete="new-password">
           <small class="form-text text-muted password_helper">The password has been inserted.</small>
         </div>
         <div class="col-12 col-lg-3 form-group">

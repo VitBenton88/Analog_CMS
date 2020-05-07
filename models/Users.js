@@ -33,6 +33,9 @@ const UsersSchema = new Schema({
 		},
 		secret: {
 			type: String
+		},
+		recovery: {
+			type: String
 		}
 	},
 	role: {

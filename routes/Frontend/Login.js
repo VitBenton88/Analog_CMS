@@ -33,13 +33,48 @@ module.exports = (app, bcrypt, db, passport, Utils) => {
 			if (!token_exists) {
 				throw new Error(token_err_msg)
 			}
-
-			const { username } = token_exists
 	
 			res.render("templates/defaults/login/mfa", {
 				site_data,
 				token,
-				username,
+				layout: "login"
+			})
+
+		} catch (error) {
+			console.error(error)
+			const errorMessage = error.errmsg || error.toString()
+			req.flash('error', errorMessage)
+			res.redirect('/login')
+		}
+	})
+
+	// MFA RECOVERY PAGE - GET
+	// =============================================================
+	app.get("/login/mfa/recovery", async (req, res) => {
+		const { query, site_data } = req
+		let { token } = query
+		const referrer = req.header('Referer')
+
+		try {
+			const token_err_msg = "Your two-factor authentication access token is invalid or expired. Please try again."
+			
+			if (!token) {
+				if (referrer) {
+					token = referrer.split('?token=').pop()
+				} else {
+					throw new Error(token_err_msg)
+				}
+			}
+					
+			const token_exists = await db.Tokens.findOne({token, type: "mfa"}).populate('user_id').lean()
+
+			if (!token_exists) {
+				throw new Error(token_err_msg)
+			}
+	
+			res.render("templates/defaults/login/recovery", {
+				site_data,
+				token,
 				layout: "login"
 			})
 
@@ -128,6 +163,46 @@ module.exports = (app, bcrypt, db, passport, Utils) => {
 			}
 			req.flash('error', errorMessage)
 			res.redirect(failureRedirect)
+		}
+	})
+
+	// MFA RECOVERY AUTH - POST
+	// =============================================================
+	app.post("/mfa/recovery", async (req, res, next) => {
+		const { code, token } = req.body
+
+		try {
+			const token_err_msg = "An error occurred while authenticating. Please try again."
+
+			if (!code || !token) {
+				throw new Error(token_err_msg)
+			}
+
+			const token_exists = await db.Tokens.findOne({token, type: "mfa"}).populate('user_id').lean()
+
+			if (!token_exists) {
+				throw new Error(token_err_msg)
+			}
+
+			const { _id, mfa } = token_exists.user_id
+
+			// check MFA recovery code
+			const isMatch = await bcrypt.compare(code, mfa.recovery)
+			
+			if (!isMatch) {
+				throw new Error("The provided recovery code is incorrect.")
+			}
+
+			// disable MFA for user
+			await db.Users.updateOne({ _id }, { 'mfa.secret': '', 'mfa.enabled': false, 'mfa.recovery': '' })
+			req.flash('success', '2-step authentication has been disabled for your account.')
+			res.redirect('/login')
+
+		} catch (error) {
+			console.error(error)
+			let errorMessage = error.errmsg || error.toString()
+			req.flash('error', errorMessage)
+			res.redirect(`/login/mfa/recovery?token=${token}`)
 		}
 	})
 

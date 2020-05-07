@@ -1,4 +1,8 @@
-module.exports = (app, bcrypt, db, GoogleAuthenticator, Utils, validator) => {
+// Dependencies
+// =============================================================
+const GoogleAuthenticator = require('passport-2fa-totp').GoogeAuthenticator
+
+module.exports = (app, bcrypt, db, GoogleAuthenticator, notp, Utils, validator) => {
 
 	// USERS PAGE - GET
 	// =============================================================
@@ -226,20 +230,17 @@ module.exports = (app, bcrypt, db, GoogleAuthenticator, Utils, validator) => {
 		}
 	})
 
-	// UPDATE MFA CONFIG - POST
+	// PROVIDE MFA QR (STEP 1) - GET
 	// =============================================================
-	app.post("/createusermfa", async (req, res) => {
+	app.get("/getusermfa", async (req, res) => {
 		const { _id, username } = req.user
 
         try {
 			const registerGoogleAuthenticator = GoogleAuthenticator.register(username)
 			const { secret, qr } = registerGoogleAuthenticator
-			await db.Users.updateOne({ _id }, { 'mfa.secret': secret, 'mfa.enabled': true })
+			await db.Users.updateOne({ _id }, { 'mfa.secret': secret })
 
-			const response = {
-				message: "Google authenticator registration successful.<br/><b>Please scan the barcode below with the Google Authenticator app.</b>", 
-				qr
-			}
+			const response = { qr }
 			// respond to client
 			res.status(200).json(response)
             
@@ -252,13 +253,69 @@ module.exports = (app, bcrypt, db, GoogleAuthenticator, Utils, validator) => {
         }
 	})
 
+	// CONFIRM MFA (STEP 2) - POST
+	// =============================================================
+	app.post("/confirmusermfa", async (req, res) => {
+		const { body, user } = req
+		const { _id } = user
+		const { token } = body
+
+        try {
+			if (!token) {
+				throw new Error('Please provide a one-time password.')
+			}
+
+			const user = await db.Users.findOne({ _id })
+
+			if (!user) {
+				throw new Error("Error occurred while registering for Google authenticator.")
+			}
+
+			// decode key
+			const key = GoogleAuthenticator.decodeSecret(user.mfa.secret)
+
+			// check TOTP is correct
+			const token_verify = notp.totp.verify(token, key)
+
+			if (!token_verify) {
+				throw new Error("The one-time password provided is not valid. Please try again.")
+			}
+
+			// generate recovery code
+			const recovery_raw = Utils.Password.generate(false, true, true, false, 19)
+			const recovery_formatted = recovery_raw.toString().match(/.{4}/g).join('-')
+			// generate encryption salt
+			const salt = await bcrypt.genSalt(10)
+			// hash recovery code
+			const recovery = await bcrypt.hash(recovery_formatted, salt)
+
+			// finalize mfa setup
+			await db.Users.updateOne({ _id }, { 'mfa.enabled': true, 'mfa.recovery': recovery })
+
+			const response = {
+				message: "Google authenticator registration successful. Below is your recovery code.",
+				recovery: recovery_formatted
+			}
+			// respond to client
+			res.status(200).json(response)
+            
+        } catch (error) {
+			console.error(error)
+			const errorMessage = error.errmsg || error.toString()
+            res.status(500).json({
+                "response": error,
+                "message": errorMessage
+            })
+        }
+	})
+
 	// DISABLE MFA - POST
 	// =============================================================
 	app.post("/removeusermfa", async (req, res) => {
 		const { _id } = req.user
 
         try {
-			await db.Users.updateOne({ _id }, { 'mfa.secret': '', 'mfa.enabled': false })
+			await db.Users.updateOne({ _id }, { 'mfa.secret': '', 'mfa.enabled': false, 'mfa.recovery': '' })
 			req.flash( 'admin_success', 'User password successfully updated.' )
             
 		} catch (error) {

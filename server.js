@@ -14,6 +14,7 @@ const GoogleAuthenticator = require('passport-2fa-totp').GoogeAuthenticator
 const helpers = require('handlebars-helpers')()
 const analogHelpers = require('./config/handlebarsHelpers.js')
 const database = require('./config/db')
+const notp = require('notp');
 const Recaptcha = require('express-recaptcha').RecaptchaV3
 const passport = require('passport')
 const path = require("path")
@@ -167,7 +168,7 @@ require("./routes/Frontend")(app, bcrypt, db, passport, Recaptcha, Utils, valida
 
 // import Admin Routes
 // =============================================================
-require("./routes/Admin")(app, bcrypt, db, GoogleAuthenticator, slugify, Utils, validator)
+require("./routes/Admin")(app, bcrypt, db, GoogleAuthenticator, notp, slugify, Utils, validator)
 
 // setup 404 handling
 // =============================================================

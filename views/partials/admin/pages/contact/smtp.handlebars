@@ -5,19 +5,19 @@
 <form action="/updatesmtp" method="POST" class="mb-5" id="updatesmtp" autocomplete="off">
     <div class="form-group">
         <label for="smtpHost">Host</label>
-        <input autocomplete="off" name="host" type="text" class="form-control" id="smtpHost" aria-describedby="hostHelp"
+        <input name="host" type="text" class="form-control" id="smtpHost" aria-describedby="hostHelp"
             placeholder="Enter host url" value="{{smtp.host}}">
         <small id="hostHelp" class="form-text text-muted">Host url of the mail server.</small>
     </div>
     <div class="form-group">
         <label for="port">Port</label>
-        <input autocomplete="off" name="port" type="number" class="form-control" id="port" aria-describedby="portHelp"
+        <input name="port" type="number" class="form-control" id="port" aria-describedby="portHelp"
             placeholder="Enter port number" value="{{smtp.port}}">
         <small id="portHelp" class="form-text text-muted">Host port.</small>
     </div>
     <div class="form-group">
         <div class="custom-control custom-switch">
-            <input autocomplete="off" name="secure" type="checkbox" class="custom-control-input" id="secureSwitch"
+            <input name="secure" type="checkbox" class="custom-control-input" id="secureSwitch"
                 {{#if smtp.secure}} checked{{/if}}>
             <label class="custom-control-label" for="secureSwitch">Secure Connection (TLS)</label>
         </div>
@@ -26,13 +26,13 @@
     <h5>Authentication</h5>
     <div class="form-group">
         <label for="smtpUser">User</label>
-        <input autocomplete="off" name="user" type="text" class="form-control" id="smtpUser" aria-describedby="userHelp"
+        <input name="user" type="text" class="form-control" id="smtpUser" aria-describedby="userHelp"
             placeholder="Enter user" value="{{smtp.user}}">
         <small id="userHelp" class="form-text text-muted">User for authentication.</small>
     </div>
     <div class="form-group">
         <label for="smtpPassword">Password</label>
-        <input autocomplete="off" name="password" type="password" class="form-control" id="smtpPassword" aria-describedby="passwordHelp"
+        <input name="password" type="password" class="form-control" id="smtpPassword" aria-describedby="passwordHelp"
             placeholder="Enter password" value="{{smtp.password}}">
         <small id="passwordHelp" class="form-text text-muted">Password for authentication.</small>
     </div>

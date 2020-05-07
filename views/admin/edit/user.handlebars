@@ -23,13 +23,13 @@
           <hr>
 
           {{#has sessionUser.role "Administrator"}}
-          <div class="row">
-            <form action="/deleteuser" method="POST" class="d-inline-block">
-                <input name="_id" type="hidden" value="{{user._id}}">
-                <a class="btn btn-outline-warning mr-5" href="/admin/users" role="button">Cancel</a>
-                <button type="submit" class="btn btn-outline-danger btn-sm">Delete User</button>
-            </form>
-          </div>
+            <div class="row">
+              <form action="/deleteuser" method="POST" class="d-inline-block">
+                  <input name="_id" type="hidden" value="{{user._id}}">
+                  <a class="btn btn-outline-warning mr-5" href="/admin/users" role="button">Cancel</a>
+                  <button type="submit" class="btn btn-outline-danger btn-sm">Delete User</button>
+              </form>
+            </div>
           {{/has}}
           
         </div> 

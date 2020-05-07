@@ -1,11 +1,10 @@
 <div class="row">
     <div class="col-12">
-        <div class="row loader"></div>
+        <div class="row loader admin_hidden_ui_ele"><div class="loader-dual-ring"></div></div>
         <div class="mfa-notifications"></div>
-        <div class="qr"></div>
         {{#with user}}
             {{#if mfa.enabled}}
-            <p>Two-factor authentication is currently enabled for your user account. Click the disable button below to disable two-factor authentication.</p>
+                <p>Two-factor authentication is currently enabled for your user account. Click the disable button below to disable two-factor authentication.</p>
                 <form action="/removeusermfa" method="POST" id="removeusermfa" autocomplete="off" class="user-update-form">
                     <input name="_id" type="hidden" value="{{_id}}">
                     <button type="submit" class="btn btn-warning">Disable 2FA</button>
@@ -13,6 +12,25 @@
             {{else}}
                 <p class="google_auth_notice"><i>Currently, Analog CMS only supports two-factor authentication through <a href="https://support.google.com/accounts/answer/1066447?co=GENIE.Platform%3DAndroid&hl=en" target="_blank">Google Authenticator</a>.</i></p>
                 <button id="mfa_gen" type="button" class="btn btn-primary">Setup One-Time Password</button>
+                
+                <div class="form-group qr-instructions admin_hidden_ui_ele mb-4">
+                    <label for="token">One-Time Password</label>
+                    <input type="text" class="form-control" id="token" aria-describedby="tokenHelp">
+                    <div class="invalid-feedback">
+                        Please provide a one-time password.
+                    </div>
+                    <small id="tokenHelp" class="form-text text-muted">Please scan the barcode below with the Google Authenticator app and provide a one-time password.</small>
+                    <button id="mfa_confirm" type="button" class="btn btn-success mt-2">Verify One-Time Password</button>
+                </div>
+
+                <div class="qr"></div>
+
+                <div class="form-group recovery-instructions admin_hidden_ui_ele mb-4">
+                    <label for="recovery">Recovery Code</label>
+                    <input class="form-control" type="text" id="recovery" aria-describedby="recoveryHelp">
+                    <small id="recoveryHelp" class="form-text text-muted">Keep your recovery code in a safe place. This code can be used when your one-time password is unavailable.</small>
+                </div>
+
             {{/if}}
         {{/with}}
     </div>
