@@ -89,7 +89,6 @@ module.exports = (app, db, slugify, Utils) => {
 	// =============================================================
 	app.post("/addmenu", async (req, res) => {
 		const { name } = req.body
-		const redirectUrl = '/admin/menus'
 
 		try {
 			// basic validation
@@ -103,13 +102,14 @@ module.exports = (app, db, slugify, Utils) => {
 			await db.Menus.create({name, slug})
 
 			req.flash( 'admin_success', 'Menu successfully added.' )
-			res.redirect(redirectUrl)
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
 			req.flash('admin_error', errorMessage)
-			res.redirect(redirectUrl)
+
+		} finally {
+			res.redirect('/admin/menus')
 		}
 	})
 
