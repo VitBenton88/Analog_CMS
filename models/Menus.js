@@ -12,12 +12,7 @@ const MenuSchema = new Schema({
         required: true,
         trim: true,
         unique: true
-    },
-    links: [{
-        type: Schema.ObjectId,
-        ref: 'Links'
-    }]
-
+    }
 })
 
 // Index all fields for searches by user

@@ -5,9 +5,7 @@ module.exports = (app, bcrypt, db, passport, Utils) => {
 	app.get("/login", (req, res) => {
 		const { site_data } = req
 
-		if ( req.isAuthenticated() ) {
-			return res.redirect('/admin/dashboard')
-		}
+		if ( req.isAuthenticated() ) return res.redirect('/admin/dashboard')
 
 		res.render("templates/defaults/login/login", {
 			site_data,
@@ -24,15 +22,11 @@ module.exports = (app, bcrypt, db, passport, Utils) => {
 		try {
 			const token_err_msg = "Your two-factor authentication access token is invalid or expired. Please try again."
 			
-			if (!token) {
-				throw new Error(token_err_msg)
-			}
+			if (!token) throw new Error(token_err_msg)
 					
 			const token_exists = await db.Tokens.findOne({token, type: "mfa"}).populate('user_id').lean()
 
-			if (!token_exists) {
-				throw new Error(token_err_msg)
-			}
+			if (!token_exists) throw new Error(token_err_msg)
 	
 			res.render("templates/defaults/login/mfa", {
 				site_data,
@@ -68,9 +62,7 @@ module.exports = (app, bcrypt, db, passport, Utils) => {
 					
 			const token_exists = await db.Tokens.findOne({token, type: "mfa"}).populate('user_id').lean()
 
-			if (!token_exists) {
-				throw new Error(token_err_msg)
-			}
+			if (!token_exists) throw new Error(token_err_msg)
 	
 			res.render("templates/defaults/login/recovery", {
 				site_data,
@@ -97,16 +89,12 @@ module.exports = (app, bcrypt, db, passport, Utils) => {
 			// lookup user
 			const user = await db.Users.findOne({ $or: [{ username }, { email: username }] })
 
-			if (!user) {
-				throw new Error("User does not exist or password is incorrect.")
-			}
+			if (!user) throw new Error("User does not exist or password is incorrect.")
 
 			// compare user
 			const isMatch = await bcrypt.compare(password, user.password)
 			
-			if (!isMatch) {
-				throw new Error("User does not exist or password is incorrect.")
-			}
+			if (!isMatch) throw new Error("User does not exist or password is incorrect.")
 
 			// if user is using MFA, redirect to page to enter 1-time pass
 			if (user.mfa.enabled) {
@@ -139,15 +127,11 @@ module.exports = (app, bcrypt, db, passport, Utils) => {
 		try {
 			const token_err_msg = "An error occurred while authenticating. Please try again."
 
-			if (!code || !token) {
-				throw new Error(token_err_msg)
-			}
+			if (!code || !token) throw new Error(token_err_msg)
 
 			const token_exists = await db.Tokens.findOne({token, type: "mfa"}).populate('user_id').lean()
 
-			if (!token_exists) {
-				throw new Error(token_err_msg)
-			}
+			if (!token_exists) throw new Error(token_err_msg)
 
 			// provide these values in req body object for passportJS
 			req.body.username = token_exists.user_id.username
@@ -174,24 +158,18 @@ module.exports = (app, bcrypt, db, passport, Utils) => {
 		try {
 			const token_err_msg = "An error occurred while authenticating. Please try again."
 
-			if (!code || !token) {
-				throw new Error(token_err_msg)
-			}
+			if (!code || !token) throw new Error(token_err_msg)
 
 			const token_exists = await db.Tokens.findOne({token, type: "mfa"}).populate('user_id').lean()
 
-			if (!token_exists) {
-				throw new Error(token_err_msg)
-			}
+			if (!token_exists) throw new Error(token_err_msg)
 
 			const { _id, mfa } = token_exists.user_id
 
 			// check MFA recovery code
 			const isMatch = await bcrypt.compare(code, mfa.recovery)
 			
-			if (!isMatch) {
-				throw new Error("The provided recovery code is incorrect.")
-			}
+			if (!isMatch) throw new Error("The provided recovery code is incorrect.")
 
 			// disable MFA for user
 			await db.Users.updateOne({ _id }, { 'mfa.secret': '', 'mfa.enabled': false, 'mfa.recovery': '' })

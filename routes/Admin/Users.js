@@ -71,7 +71,7 @@ module.exports = (app, bcrypt, db, GoogleAuthenticator, notp, Utils, validator) 
 
 		try {
 			// query user
-			const user_query = await db.Users.findById({_id: id})
+			const user_query = await db.Users.findById(id)
 			const user = user_query ? user_query.toObject({ getters: true }) : null
 
 			// if by chance the url is attempted by a non-admin user, reject it
@@ -105,18 +105,11 @@ module.exports = (app, bcrypt, db, GoogleAuthenticator, notp, Utils, validator) 
 
 		try {
 			// basic validation
-			if (!username || !email || !password || !passwordCheck || !role) {
-				throw new Error('Please fill out all fields when adding a new user.')
-			}
+			if (!username || !email || !password || !passwordCheck || !role) throw new Error('Please fill out all fields when adding a new user.')
 			// check if email provided is an email
-			if (!validator.isEmail(email)) {
-				throw new Error('Email provided is not an email.')
-			}
-
+			if (!validator.isEmail(email)) throw new Error('Email provided is not an email.')
 			// check if password verification passes
-			if (password !== passwordCheck) {
-				throw new Error('Password verification failed.')
-			}
+			if (password !== passwordCheck) throw new Error('Password verification failed.')
 
 			// generate encryption salt
 			const salt = await bcrypt.genSalt(10)
@@ -148,16 +141,12 @@ module.exports = (app, bcrypt, db, GoogleAuthenticator, notp, Utils, validator) 
 
 		try {
 			// basic validation
-			if (!username || !email || !role) {
-				throw new Error('Please fill out all fields when updated user.')
-			}
+			if (!username || !email || !role) throw new Error('Please fill out all fields when updated user.')
 
 			// prevent last admin from losing admin privileges ...
 			const onlyOneAdmin = await Utils.Users.onlyOneAdmin(_id)
 
-			if (onlyOneAdmin && role !== "Administrator") {
-				throw new Error('Cannot remove admin privileges from last admin user account.')
-			}
+			if (onlyOneAdmin && role !== "Administrator") throw new Error('Cannot remove admin privileges from last admin user account.')
 
 			// define db params
 			const updateParams = { email, image, nickname, role, username }
@@ -201,14 +190,10 @@ module.exports = (app, bcrypt, db, GoogleAuthenticator, notp, Utils, validator) 
 
 		try {
 			// basic validation
-			if (!password || !passwordCheck) {
-				throw new Error('Please fill out both password fields.')
-			}
+			if (!password || !passwordCheck) throw new Error('Please fill out both password fields.')
 
 			//check if password verification passes
-			if (password !== passwordCheck) {
-				throw new Error('Password verification failed.')
-			}
+			if (password !== passwordCheck) throw new Error('Password verification failed.')
 
 			// get salt for hash
 			const salt = await bcrypt.genSalt(10)
@@ -261,15 +246,11 @@ module.exports = (app, bcrypt, db, GoogleAuthenticator, notp, Utils, validator) 
 		const { token } = body
 
         try {
-			if (!token) {
-				throw new Error('Please provide a one-time password.')
-			}
+			if (!token) throw new Error('Please provide a one-time password.')
 
 			const user = await db.Users.findOne({ _id })
 
-			if (!user) {
-				throw new Error("Error occurred while registering for Google authenticator.")
-			}
+			if (!user) throw new Error("Error occurred while registering for Google authenticator.")
 
 			// decode key
 			const key = GoogleAuthenticator.decodeSecret(user.mfa.secret)
@@ -277,9 +258,7 @@ module.exports = (app, bcrypt, db, GoogleAuthenticator, notp, Utils, validator) 
 			// check TOTP is correct
 			const token_verify = notp.totp.verify(token, key)
 
-			if (!token_verify) {
-				throw new Error("The one-time password provided is not valid. Please try again.")
-			}
+			if (!token_verify) throw new Error("The one-time password provided is not valid. Please try again.")
 
 			// generate recovery code
 			const recovery_raw = Utils.Password.generate(false, true, true, false, 19)
@@ -358,16 +337,12 @@ module.exports = (app, bcrypt, db, GoogleAuthenticator, notp, Utils, validator) 
 
 		try {
 			// prevent non-admins from updating admin status
-			if (sessionUser.role !== "Administrator") {
-				throw new Error('You do not have permission to delete users.')
-			}
+			if (sessionUser.role !== "Administrator") throw new Error('You do not have permission to delete users.')
 
 			// prevent last admin removal
 			const userIsLastAdmin = await Utils.Users.onlyOneAdmin(_id)
 
-			if (userIsLastAdmin) {
-				throw new Error('Cannot delete last admin user account.')
-			}
+			if (userIsLastAdmin) throw new Error('Cannot delete last admin user account.')
 
 			await db.Users.deleteOne({_id})
 

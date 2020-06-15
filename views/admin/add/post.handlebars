@@ -12,7 +12,7 @@
 
         <div class="container page-body">
 
-          <form action="/addpost" method="POST" id="addpost" class="add-form">
+          <form action="/page/create/single" method="POST" id="addpost" class="add-form" enctype="multipart/form-data">
             <div class="form-group row">
 
               <div class="col-12">
@@ -39,7 +39,7 @@
                 {{> admin/components/thumbnail-upload 
                 image=page.image 
                 id=page._id 
-                delurl='/deletepageimage'
+                delurl='/page/image/delete'
                 caption='Featured Image'}}
 
               </div>
@@ -60,31 +60,24 @@
               </div>
               <div class="col-12 col-md-4">
                 <small id="publishedHelp" class="form-text text-muted">Publish date to display</small>
-                <input name="published" type="text" class="form-control datepicker" aria-describedby="publishedHelp"
-                  placeholder="Select date"></input>
+                <input name="published" type="date" class="form-control" aria-describedby="publishedHelp" placeholder="Select date"></input>
               </div>
             </div>
-
-            <hr>
 
             <div class="form-group">
               <label for="content">Post Content</label>
               <small id="contentHelp" class="form-text text-muted">The content of the post</small>
-              <textarea name="content" id="content" class="form-control summernote-editor" aria-describedby="contentHelp"
-                placeholder="The post ..."></textarea>
+              <textarea name="content" id="content" class="form-control summernote-editor" aria-describedby="contentHelp" placeholder="The post ..."></textarea>
             </div>
 
-            <hr>
-
             {{> admin/components/accordian name='post-taxonomies' title='Taxonomies' style="success" content="admin/pages/edit/post/taxonomies"}}
-
-            {{> admin/components/accordian name='custom-fields' title='Custom Fields' style="info" content="admin/pages/edit/post/customfields"}}
 
             {{> admin/components/accordian name='post-meta' title='Meta' style="secondary" content="admin/pages/edit/post/meta"}}
 
             {{> admin/components/accordian name='page-forms' title='Forms' style="primary" content="admin/pages/edit/post/forms"}}
 
             <input id="_image" name="image" type="hidden">
+            <input name="is_post" type="hidden" value="true">
             <button type="submit" class="btn btn-success btn-lg mr-3">Create Post</button>
             <a class="btn btn-outline-warning" href="/admin/posts" role="button">Cancel</a>
           </form>

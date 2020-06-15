@@ -4,10 +4,7 @@ module.exports = {
             // redirect is session cookie has previous attempted url (before auth)
             const analog_pre_auth_url = req.cookies['analog_pre_auth_url']
 
-            if ( analog_pre_auth_url ) {
-                res.clearCookie('analog_pre_auth_url').redirect(analog_pre_auth_url)
-                return
-            }
+            if ( analog_pre_auth_url ) return res.clearCookie('analog_pre_auth_url').redirect(analog_pre_auth_url)
 
             return next()
         }

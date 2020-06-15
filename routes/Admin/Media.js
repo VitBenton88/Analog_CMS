@@ -46,13 +46,12 @@ module.exports = (app, db, Utils) => {
     // =============================================================
     app.post("/uploadmedia", async (req, res) => {
         const { files, site_data } = req
-        const { type } = site_data.settings.storage
+        const { storage } = site_data.settings
+        const { type } = storage
 
         try {
             // basic validation
-            if (!files.media) {
-                throw new Error('No file submitted. Please try again.')
-            }
+            if (!files.media) throw new Error('No file submitted. Please try again.')
 
             // prevent bulk uploads on cloud storage
             if (Array.isArray(files.media) && type !== 'local') {
@@ -60,7 +59,7 @@ module.exports = (app, db, Utils) => {
             }
 
             // upload media
-            await Utils.Storage.write(files.media, site_data.settings.storage)
+            await Utils.Storage.write(files.media, storage)
 
             req.flash( 'admin_success', 'Media successfully added.' )
 

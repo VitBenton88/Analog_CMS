@@ -63,7 +63,6 @@ module.exports = (app, db, Utils) => {
         try {
             // create taxonomy in db
             await db.Taxonomies.create({name})
-
             req.flash( 'admin_success', 'Taxonomy successfully added.' )
 
         } catch (error) {
@@ -84,7 +83,7 @@ module.exports = (app, db, Utils) => {
         try {
             const sessionUser = { username: user.username, _id: user._id }
             const _id = params.id
-            const taxonomy = await db.Taxonomies.findById({_id}).populate({path: 'terms', options: {sort: {"name": 1}} }).lean()
+            const taxonomy = await db.Taxonomies.findById(_id).populate({path: 'terms', options: {sort: {"name": 1}} }).lean()
 
             res.render("admin/edit/taxonomy", {
                 taxonomy,
@@ -109,7 +108,6 @@ module.exports = (app, db, Utils) => {
         try {
             // update db
             await db.Taxonomies.updateOne({_id}, {name})
-
             req.flash( 'admin_success', 'Taxonomy successfully edited.' )
             
         } catch (error) {
@@ -151,7 +149,7 @@ module.exports = (app, db, Utils) => {
             if (!deleteQuery) {
                 req.flash( 'admin_success', 'Bulk edit successful.' )
 
-                return res.send(true);
+                return res.send(true)
             }
 
             // setup more db query params
@@ -161,10 +159,10 @@ module.exports = (app, db, Utils) => {
             await db.Terms.deleteMany({ owner })
 
             // then remove all references to deleted terms in posts
-            await db.Posts.updateMany({ taxonomies: in_taxonomies }, { $pull: {taxonomies: in_taxonomies } })
+            await db.Pages.updateMany({ taxonomies: in_taxonomies }, { $pull: {taxonomies: in_taxonomies } })
 
             req.flash( 'admin_success', 'Taxonomies successfully deleted.' )
-            res.send(true);
+            res.send(true)
 
         } catch (error) {
             console.error(error)
@@ -181,7 +179,7 @@ module.exports = (app, db, Utils) => {
 
         try {
             // find taxonomy
-            const taxonomy = await db.Taxonomies.findById({_id})
+            const taxonomy = await db.Taxonomies.findById(_id)
             // collect terms to delete
             const terms = taxonomy.terms
             const _deletedTaxonomyTerms = []
@@ -199,7 +197,7 @@ module.exports = (app, db, Utils) => {
             // delete all of its terms too
             await db.Terms.deleteMany({owner: _id})
             // pull from posts' list of terms
-            await db.Posts.updateMany({ taxonomies }, {$pull: { taxonomies } })
+            await db.Pages.updateMany({ taxonomies }, {$pull: { taxonomies } })
 
             req.flash( 'admin_success', 'Taxonomy successfully deleted.' )
             res.redirect("/admin/taxonomies")

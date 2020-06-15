@@ -12,7 +12,7 @@
 
         <div class="container page-body">
 
-          <form action="/addpage" method="POST" id="addpage" class="add-form">
+          <form action="/page/create/single" method="POST" id="addpage" class="add-form" enctype="multipart/form-data">
             <div class="form-group row">
               <div class="col-12">
                 <div class="custom-fields-notifications"></div>
@@ -49,7 +49,7 @@
                 {{> admin/components/thumbnail-upload 
                 image=page.image 
                 id=page._id 
-                delurl='/deletepageimage'
+                delurl='/page/image/delete'
                 caption='Featured Image'}}
                 
               </div>
@@ -85,24 +85,17 @@
               </div>
             </div>
 
-            <hr>
-
             <div class="form-group">
               <label for="content">Page Content</label>
-              <small id="contentHelp" class="form-text text-muted">The content of the page</small>
-              <textarea id="content" name="content" class="form-control summernote-editor" aria-describedby="contentHelp"
-                placeholder="The content ..."></textarea>
+              <textarea id="content" name="content" class="form-control summernote-editor" aria-describedby="contentHelp" placeholder="The content ..."></textarea>
             </div>
-
-            <hr>
-
-            {{> admin/components/accordian name='custom-fields' title='Custom Fields' style="info" content="admin/pages/edit/page/customfields"}}
 
             {{> admin/components/accordian name='page-meta' title='Meta' style="secondary" content="admin/pages/edit/page/meta"}}
 
             {{> admin/components/accordian name='page-forms' title='Forms' style="primary" content="admin/pages/edit/page/forms"}}
 
             <input id="_image" name="image" type="hidden">
+            <input name="is_post" type="hidden" value="false">
             <button type="submit" class="btn btn-success btn-lg mr-3">Create Page</button>
             <a class="btn btn-outline-warning" href="/admin/pages" role="button">Cancel</a>
           </form>

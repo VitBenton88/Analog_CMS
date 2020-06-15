@@ -12,12 +12,7 @@ const MetaSchema = new Schema({
 	owner: {
 		type: Schema.Types.ObjectId,
 		required: true,
-		refPath: 'ownerModel'
-	},
-	ownerModel: {
-		type: String,
-		required: true,
-		enum: ['Pages', 'Posts']
+		ref: 'Pages'
 	}
 })
 

@@ -28,7 +28,7 @@ const Password = {
         }
         
         // create a loop
-        for(let i=0; i<length; i+=typesCount) {
+        for(let i = 0; i < length; i += typesCount) {
             typesArr.forEach(type => {
                 const funcName = Object.keys(type)[0]
                 generatedPassword += randomFunc[funcName]()

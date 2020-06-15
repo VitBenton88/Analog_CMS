@@ -20,6 +20,10 @@ const FormsSchema = new Schema({
         type: Array,
         default: []
     },
+    submissions: {
+        type: Number,
+        default: 0
+    },
     entries: [{
         type: Schema.ObjectId,
         ref: 'Entries'

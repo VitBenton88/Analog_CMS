@@ -106,7 +106,7 @@ module.exports = (app, db, Utils) => {
             }
 
             req.flash('admin_success', flashMsg)
-            res.send(true);
+            res.send(true)
 
         } catch (error) {
             console.error(error)

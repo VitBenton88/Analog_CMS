@@ -4,48 +4,45 @@ module.exports = {
     /**
      * Block helper that renders menu with submenu elements
      *
-     * @param {Object} `menuObj` Object containing menu link with its submenu.
+     * @param {String} `slug` string associated to menu.
      * @return {String} HTML elements of menu and submenus.
      */
 
-    renderMenu: (menuObj, pageData) => {
-        // make sure menu object exists
-        if (!menuObj) {
-            return null
-        }
-        // capture current page url
-        const currentUrl = pageData.data.root.url
+    renderMenu: (slug, pageData) => {
+        const { menus, url } = pageData.data.root
+
+        // guard clause
+        if (!slug || !menus) return null
+
+        const menu = menus[slug]
+
+        // guard clause
+        if (!menu) return null
 
         // function for returning active class
-        const activeClass = (item) => {
-            if (item.submenu.length) {
-                for (let i = 0; i < item.submenu.length; i++) {
-                    const currentItem = item.submenu[i]
-                    if (currentUrl == currentItem.route) {
-                        return ' active'
-                    }
-                }
-            }
-
-            return currentUrl == item.route ? ' active' : ''
+        const activeClass = (url, route) => {
+            return url.includes(route) ? " active" : ""
         }
-        // create emty string that will be returned with html
-        let submenuMap = ''
-        // iterate over menu items
-        menuObj.links.map((item) => {
-            item.submenu.length ?
-                submenuMap += `<li class="nav-item dropdown${activeClass(item)}">
-                <a class="nav-link dropdown-toggle" href="${item.route}" target="${item.target}" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    ${item.text}
-                </a>
-                <ul class="dropdown-menu nav-submenu" aria-labelledby="navbarDropdown">
-                    ${item.submenu.map(subitem => `<li class="nav-subitem${activeClass(subitem)}"><a class="dropdown-item" href="${subitem.route}" target="${subitem.target}">${subitem.text}</a></li>`).join('')}
-                </ul>
-            </li>` :
-                submenuMap += `<li class="nav-item${activeClass(item)}"><a class="nav-link" href="${item.route}" target="${item.target}">${item.text}</a></li>`
-        }).join('')
 
-        return `<ul id="menu-${menuObj.slug}" class="navbar-nav">${submenuMap}</ul>`
+        // function for generating menu items
+        const itemDom = (accumulator, item) => {
+            if (!item) return false
+            const {children, route, target, text} = item
+
+            return children.length ?
+                accumulator += `<li class="nav-item dropdown${activeClass(url, route)}">
+                                    <a class="nav-link dropdown-toggle" href="${route}" target="${target}">
+                                        ${item.text}
+                                    </a>
+                                    <ul class="dropdown-menu nav submenu">
+                                        ${children.reduce(itemDom, '')}
+                                    </ul>
+                                </li>` :
+                accumulator += `<li class="nav-item${activeClass(url, route)}"><a class="nav-link" href="${route}" target="${target}">${text}</a></li>`
+        }
+
+        // return completed menu
+        return `<ul id="menu-${slug}" class="nav">${menu.reduce(itemDom, '')}</ul>`
     },
 
     generateBodyClasses: (pageData) => {
@@ -57,10 +54,9 @@ module.exports = {
             return classes
         }
 
-        let { permalink, title, template } = pageData.data.root.page_data
+        let { is_post, title, template } = pageData.data.root.page_data
 
-        const isPost = permalink.ownerModel == "Posts";
-        const pageType = isPost ? 'post' : 'page';
+        const pageType = is_post ? 'post' : 'page';
 
         // add template class
         classes += `template-${template.trim().replace(/\s+/g, '-').replace(/\//g, '-').toLowerCase()} `
@@ -69,7 +65,7 @@ module.exports = {
         // add page type class
         classes += `${pageType}`
         // if this is a post, add taxonomies to classes
-        if (isPost) {
+        if (is_post) {
             let { taxonomies } = pageData.data.root
             if (taxonomies.length) {
                 taxonomies.forEach((taxonomy) => {
@@ -79,22 +75,6 @@ module.exports = {
         }
 
         return classes
-    },
-
-    customField: (slug, pageData) => {
-        const customFieldsArr = pageData.data.root.page_data.customFields
-        let value = ''
-
-        for (let index = 0; index < customFieldsArr.length; index++) {
-            const currentField = customFieldsArr[index];
-
-            if (currentField.slug == slug) {
-                value = currentField.value;
-                break;
-            }
-        }
-
-        return value
     },
 
     form: (formSlug, pageData) => {

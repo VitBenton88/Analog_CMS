@@ -15,7 +15,7 @@
         {{> admin/components/notifications}}
 
         <div class="container page-body">
-          <form action="/updatepost" method="POST" id="updatepost">
+          <form action="/page/update/single" method="POST" id="updatepost" enctype="multipart/form-data">
             <div class="form-group row">
               
               <div class="col-12">
@@ -45,7 +45,7 @@
                 {{> admin/components/thumbnail-upload 
                 image=post.image 
                 id=post._id 
-                delurl='/deletepostimage'
+                delurl='/page/image/delete'
                 caption='Featured Image'}}
 
               </div>
@@ -72,25 +72,21 @@
               </div>
               <div class="col-12 col-md-4">
                 <small id="publishedHelp" class="form-text text-muted">Publish date to display</small>
-                <input name="published" type="text" class="form-control datepicker" aria-describedby="publishedHelp"
-                  placeholder="Select date" value="{{moment post.published format="MM/DD/YYYY"}}"></input>
+                <input name="published" type="date" class="form-control" aria-describedby="publishedHelp"
+                  placeholder="Select date" value="{{moment post.published format="YYYY-MM-DD"}}"></input>
               </div>
             </div>
-
-            <hr>
 
             <div class="form-group">
               <label for="content">Post Content</label>
               <small id="contentHelp" class="form-text text-muted">The content of the post</small>
-              <textarea id="content" name="content" class="form-control summernote-editor" aria-describedby="contentHelp"
-                placeholder="The post ...">{{post.content}}</textarea>
+              <textarea id="content" name="content" class="form-control summernote-editor" aria-describedby="contentHelp" placeholder="The post ...">{{post.content}}</textarea>
+              {{> admin/pages/common/fields}}
             </div>
 
             {{> admin/components/accordian name='post-taxonomies' title='Taxonomies' style="dark" content="admin/pages/edit/post/taxonomies"}}
 
             {{> admin/components/accordian name='post-blocks' title='Blocks' local_blocks=post.blocks style="success" content="admin/pages/edit/page/blocks"}}
-
-            {{> admin/components/accordian name='custom-fields' title='Custom Fields' style="info" content="admin/pages/edit/post/customfields"}}
 
             {{> admin/components/accordian name='post-meta' title='Meta' style="secondary" content="admin/pages/edit/post/meta"}}
 
@@ -98,6 +94,7 @@
 
             <input id="_image" name="image" type="hidden" value="{{post.image._id}}">
             <input name="originalRoute" type="hidden" value="{{post.permalink.full}}">
+            <input name="is_post" type="hidden" value="true">
             <input name="_id" type="hidden" value="{{post._id}}">
             <button type="submit" class="btn btn-success btn-lg mr-3">Update Post</button>
             <a class="btn btn-outline-warning" href="/admin/posts" role="button">Cancel</a>
@@ -107,7 +104,7 @@
           <hr>
 
           <div class="row">
-            <form action="/deletepost" method="POST" class="d-inline-block">
+            <form action="/page/delete" method="POST" class="d-inline-block">
               <input name="_id" type="hidden" value="{{post._id}}">
               <button type="submit" class="btn btn-danger btn-sm">Delete Post</button>
             </form>

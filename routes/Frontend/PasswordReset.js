@@ -19,15 +19,11 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 		const { token } = query
 
 		try {
-			if (!token) {
-				return next()
-			}
+			if (!token) return next()
 
 			const token_exists = await db.Tokens.findOne({token, type: "passwordreset"})
 
-			if (!token_exists) {
-				return next()
-			}
+			if (!token_exists) return next()
 
 			res.render("templates/defaults/password/reset", {
 				site_data,
@@ -54,9 +50,7 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 			const site_url = site_data.settings.address || `${protocol}://${headers.host}`
 
 			// validate
-			if ( !email || !validator.isEmail(email) ) {
-				throw new Error('Email not provided. Please provide an email to reset a password.')
-			}
+			if ( !email || !validator.isEmail(email) ) throw new Error('Email not provided. Please provide an email to reset a password.')
 
 			// lookup user account
 			const user = await db.Users.findOne({email})
@@ -109,20 +103,14 @@ module.exports = (app, bcrypt, db, Utils, validator) => {
 
 		try {
 			// validation
-			if (!newPassword || !verifyPassword) {
-				throw new Error('Password or password verification missing. Please supply both when resetting password.')
-			}
+			if (!newPassword || !verifyPassword) throw new Error('Password or password verification missing. Please supply both when resetting password.')
 
-			if (newPassword !== verifyPassword) {
-				throw new Error('Your password verification failed. Please enter your new password and verify it.')
-			}
+			if (newPassword !== verifyPassword) throw new Error('Your password verification failed. Please enter your new password and verify it.')
 
 			// lookup token info
 			const token_info = await db.Tokens.findOne({token, type: "passwordreset"})
 
-			if (!token || !token_info) {
-				throw new Error('Something went wrong. No token found')
-			}
+			if (!token || !token_info) throw new Error('Something went wrong. No token found')
 
 			// get user ID
 			const _id = token_info.user_id

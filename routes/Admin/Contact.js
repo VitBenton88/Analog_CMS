@@ -68,9 +68,7 @@ module.exports = (app, db, Utils) => {
 
         try {
             // some basic validation
-            if (!emailTo) {
-                throw new Error('Recipient email not provided for SMTP test email.')
-            }
+            if (!emailTo) throw new Error('Recipient email not provided for SMTP test email.')
 
             const mailData = {
                 to: emailTo,

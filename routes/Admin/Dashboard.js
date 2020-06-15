@@ -15,10 +15,21 @@ module.exports = (app, db) => {
 
 		try {
 			// query data for quick view
-			const pages = await db.Pages.find().lean()
-			const posts = await db.Posts.find().lean()
-			const unreadEntries = await db.Entries.find({read: false}).lean()
-			const users = await db.Users.find().lean()
+			let pages = 0
+			let posts = 0
+			const pages_query = await db.Pages.find().lean()
+			const unreadEntries = await db.Entries.find({read: false}).countDocuments().lean()
+			const users = await db.Users.find().countDocuments().lean()
+
+			// count pages & posts\
+			for (let i = 0; i < pages_query.length; i++) {
+				const { is_post } = pages_query[i];
+				if (is_post) {
+					posts++
+				} else {
+					pages++
+				}
+			}
 			
 			// render
 			res.render("admin/dashboard", {

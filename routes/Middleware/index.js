@@ -5,6 +5,5 @@ module.exports = (app, db, ensureAuthenticated, Recaptcha) => {
 	require("./Redirects.js")(app, db)
 	require("./Recaptcha.js")(app, db, Recaptcha)
 	require("./Settings.js")(app, db)
-	require("./Menus.js")(app, db)
 	require("./Blocks.js")(app, db)
 }

@@ -21,19 +21,19 @@
                   <ul class="list-group">
                     <a href="/admin/pages" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                       Pages
-                      <span class="badge badge-primary badge-pill">{{pages.length}}</span>
+                      <span class="badge badge-primary badge-pill">{{pages}}</span>
                     </a>
                     <a href="/admin/posts" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                       Posts
-                      <span class="badge badge-primary badge-pill">{{posts.length}}</span>
+                      <span class="badge badge-primary badge-pill">{{posts}}</span>
                     </a>
-                    <a href="/admin/contact/entries?orderBy=created&sort=desc" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center{{#if unreadEntries.length}} list-group-item-success{{/if}}">
+                    <a href="/admin/contact/entries?orderBy=created&sort=desc" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center{{#if unreadEntries}} list-group-item-success{{/if}}">
                       Unread Entries
-                      <span class="badge badge-primary badge-pill">{{unreadEntries.length}}</span>
+                      <span class="badge badge-primary badge-pill">{{unreadEntries}}</span>
                     </a>
                     <a href="/admin/users" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                       Users
-                      <span class="badge badge-primary badge-pill">{{users.length}}</span>
+                      <span class="badge badge-primary badge-pill">{{users}}</span>
                     </a>
                   </ul>
                 </div>

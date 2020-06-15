@@ -1,26 +1,31 @@
-<div class="container">
+<div class="container mb-5">
     <div class="row">
         <div class="col-12 text-center mt-4">
-            <h1>Search results for: "{{term}}"</h1>
+            <h1 class="mb-3">Search results for: "{{term}}"</h1>
         </div>
     </div>
+
     <div class="row">
         <div class="col-12">
-            {{#if results.Pages}}
-                <h4>Pages:</h4>
-                {{#each results.Pages}}
-                    <h5><a href="{{this.permalink.full}}">{{this.title}}</a></h5>
+            {{#if pages}}
+                <h4 class="mb-3">Pages:</h4>
+                {{#each pages}}
+                    {{#with this}}
+                        <h5><a href="{{permalink.full}}">{{title}}</a></h5>
+                    {{/with}}
                 {{/each}}
-            {{/if}}
-            {{#if results.Posts}}
-                <h4 class="mt-3">Posts:</h4>
-                {{#each results.Posts}}
-                    <h5><a href="{{this.permalink.full}}">{{this.title}}</a></h5>
-                {{/each}}
-            {{/if}}
-            {{#unless results}}
+            {{else}}
                 <h5>No results for your search.</h5>
-            {{/unless}}
+            {{/if}}
+        </div>
+    </div>
+
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            {{> admin/components/pagination data=pages}}
         </div>
     </div>
 </div>

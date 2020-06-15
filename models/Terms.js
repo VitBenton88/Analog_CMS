@@ -15,7 +15,7 @@ const TermsSchema = new Schema({
 	},
 	associations: [{ 
 		type: Schema.ObjectId, 
-		ref: 'Posts' 
+		ref: 'Pages' 
 	}]
 })
 

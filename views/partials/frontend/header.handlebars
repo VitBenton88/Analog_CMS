@@ -24,13 +24,6 @@
     
     {{{site_data.settings.meta_head}}}
 
-    <!--BOOTSTRAP -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <!--FONT AWESOME -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
     <!--LOCAL CSS -->
     <link rel="stylesheet" type="text/css" href="/assets/style.css">
     <!--FAVICON -->
@@ -39,32 +32,3 @@
 
 <body class="{{generateBodyClasses}}">
     {{{site_data.settings.meta_body}}}
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <!-- DESKTOP MENU -->
-    <div class="d-flex justify-content-between" style="width: 100%">
-        <div class="d-none d-lg-flex justify-content-between" id="navbarNavDesktop">
-            {{{renderMenu menus.main-menu}}}
-        </div>
-        <form class="form-inline my-2 my-lg-0 d-none d-lg-flex" action="/search" method="GET">
-            <input class="form-control mr-sm-2" name="term" type="search" placeholder="Search" aria-label="Search" value="{{term}}" required>
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-    </div>
-    
-    <!-- MOBILE MENU -->
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavMobile" aria-controls="navbarNavMobile" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarNavMobile">
-        <ul class="navbar-nav d-block d-lg-none">
-            {{{renderMenu menus.main-menu}}}
-        </ul>
-        <form class="form-inline my-2 my-lg-0 d-block d-lg-none" action="/analog/search" method="POST">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-    </div>
-
-</nav>

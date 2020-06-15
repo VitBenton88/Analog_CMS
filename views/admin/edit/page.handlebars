@@ -16,7 +16,7 @@
         {{> admin/components/notifications}}
 
         <div class="container page-body">
-          <form action="/updatepage" method="POST" id="updatepage">
+          <form action="/page/update/single" method="POST" id="updatepage" enctype="multipart/form-data">
 
             <div class="form-group row">
               <div class="col-12">
@@ -58,7 +58,7 @@
                 {{> admin/components/thumbnail-upload 
                 image=page.image 
                 id=page._id 
-                delurl='/deletepageimage'
+                delurl='/page/image/delete'
                 caption='Featured Image'}}
 
               </div>
@@ -67,8 +67,7 @@
             <div class="form-group row main-page-form">
               <div class="col-12 mt-3">
                 <small id="titleHelp" class="form-text text-muted">Name of page</small>
-                <input name="title" type="text" class="form-control" aria-describedby="titleHelp"
-                  placeholder="Enter title ..." value="{{page.title}}" required></input>
+                <input name="title" type="text" class="form-control" aria-describedby="titleHelp" placeholder="Enter title ..." value="{{page.title}}" required></input>
               </div>
 
               <div class="col-12 col-md-4 mt-3">
@@ -77,8 +76,7 @@
                   {{#each templates}}
                     <option value="{{this}}" {{#eq ../page.template this}} selected="selected" {{/eq}}>{{this}}</option>
                   {{/each}}
-                  <option value="defaults/page" {{#eq page.template 'defaults/page'}} selected="selected" {{/eq}}>
-                    Default page Template</option>
+                  <option value="defaults/page" {{#eq page.template 'defaults/page'}} selected="selected" {{/eq}}>Default page Template</option>
                 </select>
               </div>
 
@@ -95,7 +93,7 @@
               </div>
 
               <div class="col-12 mt-3">
-                <hr>
+                
                 <small id="routeHelp" class="form-text text-muted">Permalink of page, leave out the beginning backslash
                   "/"</small>
                 <div class="d-flex align-items-center">
@@ -106,16 +104,11 @@
               </div>
             </div>
 
-            <hr>
-
             <div class="form-group">
               <label for="content">Page Content</label>
-              <small id="contentHelp" class="form-text text-muted">The content of the page</small>
-              <textarea id="content" name="content" class="form-control summernote-editor" aria-describedby="contentHelp"
-                placeholder="The content ...">{{page.content}}</textarea>
+              <textarea id="content" name="content" class="form-control summernote-editor" aria-describedby="contentHelp" placeholder="The content ...">{{page.content}}</textarea>
+              {{> admin/pages/common/fields}}
             </div>
-
-            {{> admin/components/accordian name='custom-fields' title='Custom Fields' style="info" content="admin/pages/edit/page/customfields"}}
 
             {{> admin/components/accordian name='page-blocks' title='Blocks' local_blocks=page.blocks style="success" content="admin/pages/edit/page/blocks"}}
 
@@ -126,6 +119,7 @@
 
             <input id="_image" name="image" type="hidden" value="{{page.image._id}}">
             <input name="_id" type="hidden" value="{{page._id}}">
+            <input name="is_post" type="hidden" value="false">
             <input name="originalRoute" type="hidden" value="{{page_full_permalink}}">
             <button type="submit" class="btn btn-success btn-lg mr-3">Update Page</button>
             <a class="btn btn-outline-warning" href="/admin/pages" role="button">Cancel</a>
@@ -136,7 +130,7 @@
 
           <div class="row">
             <div class="col-12">
-              <form action="/deletepage" method="POST" class="d-inline-block">
+              <form action="/page/delete" method="POST" class="d-inline-block">
                 <input name="_id" type="hidden" value="{{page._id}}">
                 <button type="submit" class="btn btn-danger btn-sm">Delete Page</button>
               </form>

@@ -36,6 +36,10 @@ const PageSchema = new Schema({
 	content: {
 		type: String
 	},
+	taxonomies: [{
+		type: Schema.ObjectId,
+		ref: 'Taxonomies'
+	}],
 	forms: [{
 		type: Schema.ObjectId,
 		ref: 'Forms'
@@ -49,14 +53,17 @@ const PageSchema = new Schema({
 		ref: 'Meta',
 		autopopulate: true
 	},
-	customFields: [{
-		type: Schema.ObjectId,
-		ref: 'CustomFields',
-		autopopulate: true
-	}],
+	is_post: {
+		type: Boolean,
+		default: false
+	},
 	active: {
 		type: Boolean,
 		default: false
+	},
+	published: {
+		type: Date,
+		default: Date.now
 	},
 	private: {
 		type: Boolean,

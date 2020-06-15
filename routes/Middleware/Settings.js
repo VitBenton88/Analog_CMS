@@ -7,16 +7,12 @@ module.exports = (app, db) => {
 		
 		try {
 			// make sure post request to create analog cms base data goes through
-			if ( url == "/initialize" && method !== "GET" ) {
-				return next()
-			}
+			if ( url == "/initialize" && method !== "GET" ) return next()
 
 			const site_data = await db.Analog.findOne().lean()
 
 			// if no site data exists, force initialize screen
-			if (!site_data) {
-				return res.render("admin/initialize", { layout: "initialize" })
-			}
+			if (!site_data) return res.render("admin/initialize", { layout: "initialize" })
 
 			// insert into express req object
 			req.site_data = site_data

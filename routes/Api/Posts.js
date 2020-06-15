@@ -8,15 +8,13 @@ module.exports = (app, db) => {
 
 		try {
 			// if no taxonomies are provided, throw error
-			if (!_taxonomies) {
-				throw new Error('No taxonomy ids provided.')
-			}
+			if (!_taxonomies) throw new Error('No taxonomy ids provided.')
 
 			// convert id to array incase there are several
 			const _taxonomies_Arr = _taxonomies.split(',')
 
 			// query db for posts
-			const posts = await db.Posts.find({taxonomies: {$in: _taxonomies_Arr}}).lean()
+			const posts = await db.Pages.find({taxonomies: {$in: _taxonomies_Arr}}).lean()
 
 			// respond to client
 			res.status(200).json(posts)
@@ -39,7 +37,7 @@ module.exports = (app, db) => {
 
 		try {          
 			// query db for posts
-			const posts = await db.Posts.find({$text: {$search: term} }).lean()
+			const posts = await db.Pages.find({$text: {$search: term}, is_post: true }).lean()
 			// respond to client
 			res.status(200).json(posts)
 
@@ -62,7 +60,7 @@ module.exports = (app, db) => {
 
 		try {
 			// query db for posts (when an id(s) is provided, only query for that id)
-			const posts = _ids ? await db.Posts.find({_id: {$in: _ids_Arr}}).lean() : await db.Posts.find().lean()
+			const posts = _ids ? await db.Pages.find({_id: {$in: _ids_Arr}, is_post: true}).lean() : await db.Pages.find({is_post: true}).lean()
 			// respond to client
 			res.status(200).json(posts)
 

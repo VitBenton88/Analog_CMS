@@ -4,25 +4,25 @@ const db = require("../models")
 
 const Users = {
 	onlyOneAdmin: (_id) => new Promise(async (resolve, reject) => {
-	try {
-		const users = await db.Users.find({role: 'Administrator'}).lean()
-		let adminUserCount = 0
-		let userIsAdmin = false
+		try {
+			const users = await db.Users.find({role: 'Administrator'}).lean()
+			let adminUserCount = 0
+			let userIsAdmin = false
 
-		for (let i = 0; i < users.length; i++) {
-			if (users[i].role === "Administrator") {
-				adminUserCount++
-				if (users[i]._id == _id) {
-					userIsAdmin = true;
+			for (let i = 0; i < users.length; i++) {
+				if (users[i].role === "Administrator") {
+					adminUserCount++
+					if (users[i]._id == _id) {
+						userIsAdmin = true;
+					};
 				};
-			};
-		}
+			}
 
-		if (adminUserCount < 2 && userIsAdmin) {
-			return resolve(true)
-		}
+			if (adminUserCount < 2 && userIsAdmin) {
+				return resolve(true)
+			}
 
-		resolve(false)
+			resolve(false)
 
 		} catch (error) {
 			console.error(error)

@@ -1,0 +1,46 @@
+<div class="row">
+  <div class="col-12">
+    <form action="/fields/group/create" method="POST" id="createfieldgroup" autocomplete="off">
+      <div class="form-row">
+        <div class="col-12 col-sm-4 form-group">
+          <label for="create_fieldgroup_name">Name of field group.</label>
+          <input name="name" type="text" id="create_fieldgroup_name" class="form-control" placeholder="Enter name ..." required>
+        </div>
+        <div class="col-12 col-sm-4 form-group">
+          <label for="create_fieldgroup_for_type">Applies to</label>
+          <select class="custom-select" id="create_fieldgroup_for_type" name="recipient" required>
+            <option selected disabled value>Select</option>
+            <option value="Pages">Pages</option>
+            <option value="Posts">Posts</option>
+            <option value="{{#if templates}}Template{{/if}}"{{#unless templates}} disabled{{/unless}}>Template{{#unless templates}} (None found){{/unless}}</option>
+          </select>
+        </div>
+        {{#if templates}}
+        <div id="create_fieldgroup_template_select" class="col-12 col-sm-4 form-group admin_hidden_ui_ele">
+          <label for="condition">Templates</label>
+          <select name="condition" class="form-control custom-select" id="condition">
+            {{#each templates}}
+              <option value="{{this}}">{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+        {{/if}}
+        <div class="col-12 form-group">
+            <div class="custom-control custom-switch d-inline-block mr-4">
+              <input name="active" type="checkbox" class="custom-control-input" id="create_fieldgroup_active" checked>
+              <label class="custom-control-label" for="create_fieldgroup_active">Active</label>
+            </div>
+            <div class="custom-control custom-switch d-inline-block mr-4">
+              <input name="repeater" type="checkbox" class="custom-control-input" id="create_fieldgroup_repeater">
+              <label class="custom-control-label" for="create_fieldgroup_repeater">Repeater?</label>
+            </div>
+            <div class="custom-control custom-switch d-inline-block">
+              <input name="sortable" type="checkbox" class="custom-control-input" id="create_fieldgroup_sortable" disabled>
+              <label class="custom-control-label" for="create_fieldgroup_sortable">Sortable?</label>
+            </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-success btn-lg">Create Field Group</button>
+    </form>
+  </div>
+</div>

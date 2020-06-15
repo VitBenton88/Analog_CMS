@@ -10,7 +10,6 @@ module.exports = (app, db) => {
             const term = await db.Terms.create({name, owner: _owner})
             // add new term to taxonomy it belongs to
             await db.Taxonomies.updateOne({_id: _owner}, {$push: {terms: term._id} })
-    
             req.flash( 'admin_success', 'Term successfully added.' )
 
         } catch (error) {
@@ -27,11 +26,10 @@ module.exports = (app, db) => {
     // =============================================================
     app.get("/admin/term/edit/:id", async (req, res) => {
         const {site_data, params, user } = req
-        const _id = params.id
         const sessionUser = { username: user.username, _id: user._id }
 
         try {
-            const term = await db.Terms.findById({_id}).lean()
+            const term = await db.Terms.findById(params.id).lean()
 
             res.render("admin/edit/term", {
                 sessionUser,
@@ -54,6 +52,9 @@ module.exports = (app, db) => {
         const { _id, name } = req.body
 
         try {
+            // guard clause
+            if (!_id || !name) throw new Error('Please supply all fields when updating a term.')
+
             // update in db
             await db.Terms.updateOne({_id}, {name})
 
@@ -78,9 +79,9 @@ module.exports = (app, db) => {
             // db delete term query
             await db.Terms.deleteOne({_id})
             // then pull from its owners list of terms
-            await db.Taxonomies.findByIdAndUpdate({_id: _owner}, {$pull: {terms: _id} })
+            await db.Taxonomies.findByIdAndUpdate(_owner, {$pull: {terms: _id} })
             // then pull from posts' list of terms
-            await db.Posts.updateMany({taxonomies: {$in: _id} }, {$pull: {taxonomies: _id} })
+            await db.Pages.updateMany({taxonomies: {$in: _id} }, {$pull: {taxonomies: _id} })
 
             req.flash( 'admin_success', 'Term successfully deleted.' )
             res.redirect(`/admin/taxonomy/edit/${_owner}`)

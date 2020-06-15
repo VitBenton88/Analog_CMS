@@ -29,9 +29,7 @@ module.exports = (app, bcrypt, db) => {
 
         try {
             // basic validation
-            if (!username || !email || !password || !passwordCheck) {
-                throw new Error('Please fill out all fields when adding a new user.')
-            }
+            if (!username || !email || !password || !passwordCheck) throw new Error('Please fill out all fields when adding a new user.')
     
             //check if password verification passes
             if (password !== passwordCheck) throw new Error('Password verification failed.')

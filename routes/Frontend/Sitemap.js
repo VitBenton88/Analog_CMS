@@ -25,24 +25,29 @@ module.exports = (app, db) => {
 
 			// populate sitemap
 			sitemapUrls.forEach(url => {
-				const urlObj = {
-					url: url.full,
-					lastmodDateOnly: url.owner.updated.toISOString(),
-					changefreq: 'daily',
-					priority: 0.5
-				}
+				const { full, owner } = url
 
-				// add img data if it exists for this page/post
-				if (url.owner.image) {
-					urlObj['img'] = {
-						url: url.owner.image.path,
-						caption: url.owner.image.meta.caption,
-						title: url.owner.image.meta.alt
+				if (owner) {
+					const { image, updated } = owner
+					const urlObj = {
+						url: full,
+						lastmodDateOnly: updated.toISOString(),
+						changefreq: 'daily',
+						priority: 0.5
 					}
+	
+					// add img data if it exists for this page/post
+					if (owner.image) {
+						urlObj['img'] = {
+							url: image.path,
+							caption: image.meta.caption,
+							title: image.meta.alt
+						}
+					}
+	
+					// write url
+					smStream.write(urlObj)
 				}
-
-				// write url
-				smStream.write(urlObj)
 			})
 
 			// end sitemap population

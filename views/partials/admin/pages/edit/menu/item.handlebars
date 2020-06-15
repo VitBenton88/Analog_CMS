@@ -1,0 +1,36 @@
+<ul class="list-group mt-4">
+    {{#if links}}
+        {{#each links}}
+            {{#with this}}
+                <li id="{{_id}}" class="list-group-item" data-position="{{position}}" data-permalink="{{permalink._id}}" data-target="{{target}}">
+                    <div class="list-group-item-details">
+                        <div class="list-group-item-url d-flex align-items-center">
+                            <span class="list-group-item-text">{{text}}</span> <span class="ml-4 mr-4"><strong>URL: </strong><span class="list-group-item-route">{{route}}</span></span>
+                            {{#if is_ref}}
+                                {{#if permalink}}
+                                    <span class="badge badge-success">Reference</span>
+                                {{else}}
+                                    <span class="badge badge-danger">Reference Deleted</span>
+                                {{/if}}
+                            {{else}}
+                                <span class="badge badge-secondary">Custom</span>
+                            {{/if}}
+                            <div class="loader-dual-ring sm ml-3 admin_hidden_ui_ele"></div>
+                        </div>
+                        
+                        <div class="list-group-item-actions">
+                            <button type="button" class="btn btn-info btn-sm edit_menu_item ml-4" data-toggle="modal" data-target="#edit_menu_item_modal">Edit</button>
+                            <button type="button" class="btn btn-danger btn-sm del_menu_item ml-2">Delete</button>
+                        </div>
+                    </div>
+                    
+                    {{#if children}}
+                        {{> admin/pages/edit/menu/item links=children}}
+                    {{else}}
+                        <ul class="list-group mt-4"></ul>
+                    {{/if}}
+                </li>
+            {{/with}}
+        {{/each}}
+    {{/if}}
+</ul>

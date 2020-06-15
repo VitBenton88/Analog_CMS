@@ -1,0 +1,36 @@
+<form>
+    <div class="form-group">
+        <label for="text-{{#if create}}add{{else}}edit{{/if}}">Label</label>
+        <input id="text-{{#if create}}add{{else}}edit{{/if}}" name="text" class="form-control addmenuitem-text" type="text" aria-describedby="text-help-{{#if create}}add{{else}}edit{{/if}}" placeholder="Enter new menu item text ..." required>
+        <small id="text-help-{{#if create}}add{{else}}edit{{/if}}" class="form-text text-muted">Text that appears in this menu item.</small>
+    </div>
+
+    <div class="form-group">
+        <label for="route-{{#if create}}add{{else}}edit{{/if}}">URL</label>
+        <input id="route-{{#if create}}add{{else}}edit{{/if}}" name="route" class="form-control addmenuitem-url" type="text" aria-describedby="route-help-{{#if create}}add{{else}}edit{{/if}}" placeholder="Enter new menu item url ..." required>
+        <small id="route-help-{{#if create}}add{{else}}edit{{/if}}" class="form-text text-muted">Url this menu item points to.</small>
+    </div>
+
+    <div class="form-group">
+        <label for="permalin-{{#if create}}add{{else}}edit{{/if}}">Use Reference</label>
+        <select{{#unless permalinks}} disabled{{/unless}} id="permalink-{{#if create}}add{{else}}edit{{/if}}" class="custom-select menu-item-url-select" name="permalink" aria-describedby="permalink-help-{{#if create}}add{{else}}edit{{/if}}">
+            <option disabled selected value> -- select an option -- </option>
+            {{#each permalinks}}
+                {{#with this}}
+                    <option value="{{_id}}" data-route="/{{full}}" data-title="{{owner.title}}">{{owner.title}} - {{#if owner.is_post}}Post{{else}}Page{{/if}}</option>
+                {{/with}}
+            {{/each}}
+        </select>
+        <small id="permalink-help-{{#if create}}add{{else}}edit{{/if}}" class="form-text text-muted">Choose existing page.</small>
+    </div>
+
+    <div class="custom-control custom-checkbox mb-3">
+        <input id="menuitem-target-new-{{#if create}}add{{else}}edit{{/if}}" type="checkbox" name="target" class="custom-control-input">
+        <label class="custom-control-label" for="menuitem-target-new-{{#if create}}add{{else}}edit{{/if}}">Open in new tab</label>
+    </div>
+
+    <input name="_id" type="hidden" value="{{_id}}">
+    <input name="reference" type="hidden" value="false" class="addmenuitem-ref">
+    <input name="originalRoute" type="hidden" value="" class="addmenuitem-or">
+    <button type="button" class="btn btn-success btn-block menuitem_submit">Add</button>
+</form>

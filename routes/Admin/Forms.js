@@ -63,8 +63,7 @@ module.exports = (app, db, slugify, Utils) => {
 
         try {            
             // query form
-            const _id = params.id
-            const form = await db.Forms.findById({_id}).lean()
+            const form = await db.Forms.findById(params.id).lean()
 
             res.render("admin/edit/form", {
                 form,
@@ -105,9 +104,7 @@ module.exports = (app, db, slugify, Utils) => {
 
         try {
             // some basic validation
-            if (!name || !slug || !fields.length) {
-                throw new Error('Form creation attempt failed due to missing required fields.')
-            }
+            if (!name || !slug || !fields.length) throw new Error('Form creation attempt failed due to missing required fields.')
 
             // create form in db
             const newFrom = await db.Forms.create({ name, slug, fields, mail, settings })
@@ -131,9 +128,7 @@ module.exports = (app, db, slugify, Utils) => {
 
         try {
             // some basic validation
-            if (!name || !slug) {
-                throw new Error('Form creation attempt failed due to missing required fields.')
-            }
+            if (!name || !slug) throw new Error('Form creation attempt failed due to missing required fields.')
 
             // update query to db
             const updatedForm = await db.Forms.findOneAndUpdate({_id }, { name, fields, mail, settings })
@@ -167,12 +162,11 @@ module.exports = (app, db, slugify, Utils) => {
             await Query
             // pull form from any pages and posts that use it
             await db.Pages.updateMany({ forms }, { $pull: { forms } })
-            await db.Posts.updateMany({ forms }, { $pull: { forms } })
 
             const flashMsg = deleteQuery ? 'Forms successfully deleted.' : 'Bulk edit successful.'
 
             req.flash('admin_success', flashMsg)
-            res.send(true);
+            res.send(true)
 
         } catch (error) {
             console.error(error)
@@ -194,7 +188,6 @@ module.exports = (app, db, slugify, Utils) => {
             await db.Forms.deleteOne({ _id })
             // pull form from any pages and posts that use it
             await db.Pages.updateMany({ forms }, { $pull: { forms } })
-            await db.Posts.updateMany({ forms }, { $pull: { forms } })
 
             req.flash( 'admin_success', 'Form successfully deleted.' )
             res.status(200).end()
@@ -217,7 +210,7 @@ module.exports = (app, db, slugify, Utils) => {
 
         try {
             // query form
-            const form = await db.Forms.findById({ _id })
+            const form = await db.Forms.findById(_id).lean()
             const { name, fields, mail } = form
             let { recipients, replyTo, subject, success, redirect } = mail
             const destination = redirect ? redirect : formLocation
@@ -308,8 +301,8 @@ module.exports = (app, db, slugify, Utils) => {
             
             // record entry
             const entry = await db.Entries.create({form: _id, fields: submittedFields, meta})
-            // record entry to the form
-            await db.Forms.updateOne({_id}, { $push: {entries: entry._id} })
+            // push entry to the form and increment submission count
+            await db.Forms.updateOne({_id}, { $push: {entries: entry._id}, $inc: { "submissions": 1 } })
 
             // if recipients exist, fire smtp, otherwise end with response
             if (recipients.length) {
@@ -341,6 +334,9 @@ module.exports = (app, db, slugify, Utils) => {
                         }
                     })
                 }
+
+                // add script to success message for adding GTM event
+                success = `${success}<script>if (dataLayer) dataLayer.push({'event': 'form_submit', 'form_id' : '${_id}', 'form_name' : '${name}'});</script>`
 
                 // setup mail options
                 let mailData = {
@@ -377,6 +373,7 @@ module.exports = (app, db, slugify, Utils) => {
                 // send mail
                 try {
                     await Utils.Smtp.send(mailData)
+
                 } catch (error) {
                     console.error(error)
                     throw new Error(error)

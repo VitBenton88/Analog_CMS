@@ -96,7 +96,7 @@
               </div>
 
               <div class="col-12 mt-3">
-                <button id="submit_list_multi_edit" data-url="/updatepostmulti" type="button"
+                <button id="submit_list_multi_edit" data-url="/page/update/multi" data-posts="true" type="button"
                   class="btn btn-primary btn-sm" disabled>Submit</button>
               </div>
 
@@ -109,10 +109,8 @@
                   <tr>
                     <th><input type="checkbox" name="Select All Posts" value class="listCheckbox selectAll"></th>
                     <th><a href="?orderBy=title&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Title</a></th>
-                    <th><a href="?orderBy=template&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Template</a>
-                    </th>
-                    <th><a href="?orderBy=published&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Published</a>
-                    </th>
+                    <th><a href="?orderBy=template&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Template</a></th>
+                    <th><a href="?orderBy=published&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Published</a></th>
                     <th><a href="?orderBy=active&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Status</a></th>
                     <th>Actions</th>
                   </tr>

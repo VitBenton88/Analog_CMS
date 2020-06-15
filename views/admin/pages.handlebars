@@ -61,7 +61,7 @@
 
                 </div>
                 <div class="col-12 mt-3">
-                  <button id="submit_list_multi_edit" data-url="/updatepagemulti" type="button"
+                  <button id="submit_list_multi_edit" data-url="/page/update/multi" type="button"
                     class="btn btn-primary btn-sm" disabled>Submit</button>
                 </div>
                 <table class="table table-striped table-responsive-sm mt-3" id="list">
@@ -69,52 +69,49 @@
                     <tr>
                       <th><input type="checkbox" name="Select All Pages" value class="listCheckbox selectAll"></th>
                       <th><a href="?orderBy=title&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Title</a></th>
-                      <th><a href="?orderBy=homepage&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Homepage</a>
-                      </th>
-                      <th><a href="?orderBy=template&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Template</a>
-                      </th>
-                      <th><a href="?orderBy=active&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Status</a>
-                      </th>
+                      <th><a href="?orderBy=homepage&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Homepage</a></th>
+                      <th><a href="?orderBy=template&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Template</a></th>
+                      <th><a href="?orderBy=active&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Status</a></th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {{#each pages}}
-                    {{#with this}}
-                      <tr>
-                        <td><input type="checkbox" name="{{title}}" value="{{_id}}" class="listCheckbox selectSingle"></td>
-                        <td><a href="pages/edit/{{_id}}">{{title}}</a></td>
-                        <td>
-                          {{#if homepage}}
-                            <span class="badge badge-info ml-4"><i class="fas fa-check"></i></span>
-                          {{/if}}
-                        </td>
-                        <td>
-                          {{#contains template "defaults"}}
-                            Default
-                          {{else}}
-                            {{template}}
-                          {{/contains}}
-                        </td>
-                        <td>
-                          {{#if active}}
-                            <span class="badge badge-success">Active</span>
-                          {{else}}
-                            <span class="badge badge-warning">Inactive</span>
-                          {{/if}}
-                        </td>
-                        <td>
-                          <div class="dropdown">
-                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton"
-                              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select</button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                              <a class="dropdown-item" href="pages/edit/{{_id}}">Edit</a>
-                              <a class="dropdown-item" href="/{{permalink.route}}" target="_blank">View</a>
+                      {{#with this}}
+                        <tr>
+                          <td><input type="checkbox" name="{{title}}" value="{{_id}}" class="listCheckbox selectSingle"></td>
+                          <td><a href="pages/edit/{{_id}}">{{title}}</a></td>
+                          <td>
+                            {{#if homepage}}
+                              <span class="badge badge-info ml-4"><i class="fas fa-check"></i></span>
+                            {{/if}}
+                          </td>
+                          <td>
+                            {{#contains template "defaults"}}
+                              Default
+                            {{else}}
+                              {{template}}
+                            {{/contains}}
+                          </td>
+                          <td>
+                            {{#if active}}
+                              <span class="badge badge-success">Active</span>
+                            {{else}}
+                              <span class="badge badge-warning">Inactive</span>
+                            {{/if}}
+                          </td>
+                          <td>
+                            <div class="dropdown">
+                              <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select</button>
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="pages/edit/{{_id}}">Edit</a>
+                                <a class="dropdown-item" href="/{{permalink.route}}" target="_blank">View</a>
+                              </div>
                             </div>
-                          </div>
-                        </td>
-                      </tr>
-                    {{/with}}
+                          </td>
+                        </tr>
+                      {{/with}}
                     {{/each}}
                   </tbody>
                 </table>

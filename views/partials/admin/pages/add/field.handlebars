@@ -1,0 +1,112 @@
+<form action="/field/create" method="POST" id="createfield">
+    <div class="form-row d-flex align-items-center">
+
+        <div class="col-12 mb-3">
+            <h5>Add Field</h5>
+        </div>
+
+        <div class="col-12 col-md-4 form-group">
+            <label for="create_field_type">Type*</label>
+            <select class="custom-select" id="create_field_type" name="type" required>
+                <option selected disabled value>Select Type</option>
+                <option value="text">Text</option>
+                <option value="textarea" data-target="#textarea_rows">Textarea</option>
+                <option value="select" data-target=".select_param">Select</option>
+                <option value="checkbox" data-target=".select_param">Checkbox</option>
+                <option value="radio" data-target=".select_param">Radio</option>
+                <option value="upload" data-target="#upload_params">Upload</option>
+                <option value="colorpicker">Colorpicker</option>
+                <option value="number" data-targe=".number_param">Number</option>
+                <option value="date">Datepicker</option>
+                <option value="wysiwyg">WYSIWYG</option>
+            </select>
+        </div>
+
+        <div class="col-12 col-md-4 form-group">
+            <label for="create_field_title">Title*</label>
+            <input type="text" class="form-control" id="create_field_title" name="title" required>
+        </div>
+
+        <div class="col-12 col-md-4 form-group">
+            <label for="create_field_slug">Slug</label>
+            <input type="text" class="form-control" id="create_field_slug" name="slug">
+        </div>
+
+        <div class="col-12 col-md-6 form-group">
+            <label for="create_field_default">Default Value</label>
+            <input type="text" class="form-control" id="create_field_default" name="default_val">
+        </div>
+
+        <div class="col-12 col-md-6 form-group">
+            <label for="create_field_required">Required</label>
+            <select class="custom-select" id="create_field_required" name="required" required>
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+            </select>
+        </div>
+
+        <div class="col-12 form-group">
+            <label for="create_field_desc">Description</label>
+            <textarea class="form-control" id="create_field_desc" rows="3" name="description"></textarea>
+        </div>
+
+        </div>
+
+        <div class="form-row field_params">
+        <!-- Textarea Parameters -->
+        <div id="textarea_rows" class="col-12 col-md-4 form-group admin_hidden_ui_ele field_param">
+            <label for="create_field_textarea_rows">Textarea Rows</label>
+            <input type="number" class="form-control" id="create_field_textarea_rows" min="0" name="textarea_rows">
+        </div>
+
+        <!-- Number Parameters -->
+        <div class="col-12 col-md-4 form-group number_param admin_hidden_ui_ele field_param">
+            <label for="create_field_num_min">Number Minimum</label>
+            <input type="number" class="form-control" id="create_field_num_min" min="0" name="num_min">
+        </div>
+
+        <div class="col-12 col-md-4 form-group number_param admin_hidden_ui_ele field_param">
+            <label for="create_field_num_max">Number Maximum</label>
+            <input type="number" class="form-control" id="create_field_num_max" min="0" name="num_max">
+        </div>
+
+        <div class="col-12 col-md-4 form-group number_param admin_hidden_ui_ele field_param">
+            <label for="create_field_num_step">Number Maximum</label>
+            <input type="number" class="form-control" id="create_field_num_step" min="0" name="num_step">
+        </div>
+
+        <!-- Select, Radio, & Checkbox Parameters -->
+        <div class="col-12 form-group select_param admin_hidden_ui_ele field_param">
+            <label for="create_field_select_options">Value Options</label>
+            <input type="text" class="form-control" id="create_field_select_options" name="select_options" aria-describedby="create_field_select_options_help">
+            <small id="create_field_select_options_help" class="form-text text-muted">Value recorded for selection. List each following a comma, e.g. option1, option2</small>
+        </div>
+
+        <div class="col-12 form-group select_param admin_hidden_ui_ele field_param">
+            <label for="create_field_select_labels">Options Labels</label>
+            <input type="text" class="form-control" id="create_field_select_labels" name="select_labels" aria-describedby="create_field_select_labels_help">
+            <small id="create_field_select_labels_help" class="form-text text-muted">Label shown for each option. List each following a comma, e.g. label1, label2</small>
+        </div>
+
+        <!-- Upload Parameters -->
+        <div id="upload_params" class="col-12 form-group admin_hidden_ui_ele field_param">
+            <div class="custom-control custom-switch">
+                <input name="upload_images" type="checkbox" class="custom-control-input" id="create_field_upload_images" checked>
+                <label class="custom-control-label" for="create_field_upload_images">Allow Image Files?</label>
+            </div>
+            <div class="custom-control custom-switch">
+                <input name="upload_audio" type="checkbox" class="custom-control-input" id="create_field_upload_audio">
+                <label class="custom-control-label" for="create_field_upload_audio">Allow Audio Files?</label>
+            </div>
+            <div class="custom-control custom-switch">
+                <input name="upload_video" type="checkbox" class="custom-control-input" id="create_field_upload_video">
+                <label class="custom-control-label" for="create_field_upload_video">Allow Video Files?</label>
+            </div>
+        </div>
+    </div>
+
+    <input name="_owner" type="hidden" value="{{fieldGroup._id}}">
+    <button type="submit" class="btn btn-success mt-3">Add Field</button>
+</form>
+
+<hr>

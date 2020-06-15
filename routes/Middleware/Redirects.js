@@ -9,9 +9,7 @@ module.exports = (app, db) => {
 			// lookup redirect and count a hit
 			const redirect = await db.Redirects.findOneAndUpdate( { source: url, active: true }, { $inc: {"hits": 1} } )
 
-			if (!redirect) {
-				return next()
-			}
+			if (!redirect) return next()
 
 			const { target, type } = redirect
 

@@ -57,18 +57,21 @@ module.exports = (app, db, slugify, Utils) => {
 
 	// UPDATE MENU - GET
 	// =============================================================
-	app.get("/admin/menus/edit/:slug", async (req, res) => {
-		const { menus, originalUrl, params, site_data, user } = req
-		const { slug } = params
+	app.get("/admin/menus/edit/:id", async (req, res) => {
+		const { originalUrl, params, site_data, user } = req
+		const { id } = params
 		const { _id, role, username } = user
 		const sessionUser = { username, _id, role }
 
 		try {  
-			const menu = menus[slug] 
+			const menu = await db.Menus.findById(id).lean()
 			const permalinks_query = await db.Permalinks.find().populate('owner')
 			const permalinks = permalinks_query.map(permalink => permalink.toObject( { getters: true } ))
+			const links_query = await db.Links.find({owner: id, parent: null}).sort({"position": 1}).populate('permalink')
+			const links = links_query.map(link => link.toObject( { getters: true } ))
 
 			res.render("admin/edit/menu", {
+				links,
 				menu,
 				originalUrl,
 				permalinks,
@@ -92,9 +95,7 @@ module.exports = (app, db, slugify, Utils) => {
 
 		try {
 			// basic validation
-			if (!name) {
-				throw new Error('Please fill out all fields when adding a new menu.')
-			}
+			if (!name) throw new Error('Please fill out all fields when adding a new menu.')
 
 			// create slug
 			const slug = slugify(name)
@@ -121,9 +122,7 @@ module.exports = (app, db, slugify, Utils) => {
 
 		try {
 			// basic validation
-			if (!name) {
-				throw new Error('Please provide a value for name.')
-			}
+			if (!name) throw new Error('Please provide a value for name.')
 
 			// create/format slug
 			slug = slugify(name)
@@ -146,17 +145,15 @@ module.exports = (app, db, slugify, Utils) => {
 		}
 	})
 
-	// CREATE MENU ITEM - POST
+	// CREATE MENU ITEM - PUT
 	// =============================================================
-	app.post("/addmenuitem", async (req, res) => {
-		let { _id, permalink, originalRoute, slug, target, text, reference, route } = req.body
+	app.put("/addmenuitem", async (req, res) => {
+		let { _id, permalink, originalRoute, target, text, reference, route } = req.body
 
 		try {
 			// basic validation
-			if (!text || !route) {
-				throw new Error('Please fill out all fields when adding a new menu item.')
-			}
-
+			if (!text || !route) throw new Error('Please fill out all fields when adding a new menu item.')
+			
 			let is_ref = reference == "true"
 			permalink = permalink ? permalink : null
 
@@ -166,132 +163,76 @@ module.exports = (app, db, slugify, Utils) => {
 
 			// create link in db
 			const createdLink = await db.Links.create({is_ref, owner: _id, permalink, route, target, text})
-			// add link to menu it belongs to
-			await db.Menus.updateOne({_id}, { $push: {links: createdLink._id} })
-
-			req.flash( 'admin_success', 'Menu item successfully added.' )
+			// respond to client
+			res.status(200).json(createdLink)
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
-			req.flash('admin_error', errorMessage)
-
-		} finally {
-			res.redirect(`/admin/menus/edit/${slug}`)
+			res.status(500).json({
+				"response": errorMessage,
+				"message": "Error occurred while creating repeater field."
+			})
 		}
 	})
 
-	// UPDATE MENU ITEM - POST
+	// UPDATE MENU ITEM - PUT
 	// =============================================================
-	app.post("/updatemenuitem", async (req, res) => {
-		let { _id, originalRoute, permalink, reference, slug, target, text, route } = req.body
+	app.put("/updatemenuitem", async (req, res) => {
+		let { _id, originalRoute, permalink, reference, target, text, route } = req.body
 
 		try {
 			// basic validation
-			if (!text || !route) {
-				throw new Error('Please fill out all fields when adding a new menu item.')
-			}
+			if (!text || !route) throw new Error('Please fill out all fields when updating a menu item.')
 
 			let is_ref = reference == "true"
-			permalink = permalink ? permalink : null
 			target = target ? target : '_self'
+			permalink = permalink ? permalink : null
 
 			if (is_ref && originalRoute !== route) {
 				is_ref = false
+				permalink = null
 			}
 
 			// update in db
-			await db.Links.updateOne({_id}, {is_ref, permalink, route, target, text})
-
-			req.flash( 'admin_success', 'Menu item successfully edited.' )
+			const updatedLink = await db.Links.findOneAndUpdate({_id}, {is_ref, permalink, route, target, text}, {new: true})
+			// respond to client
+			res.status(200).json(updatedLink)
 
 		} catch (error) {
 			console.error(error)
 			const errorMessage = error.errmsg || error.toString()
-			req.flash('admin_error', errorMessage)
+			res.status(500).json({
+				"response": errorMessage,
+				"message": "Error occurred while creating repeater field."
+			})
 			
-		} finally {
-			res.redirect(`/admin/menus/edit/${slug}`)
 		}
 	})
 
 	// UPDATE MENU ITEM POSITION - PUT
 	// =============================================================
 	app.put("/updatemenuitemposition", async (req, res) => {
-		const { _id, _id_newPosition, _id_menu_oldPosition, _menuSwapped } = req.body
+		let { _ids, moved_item_id, parent, positions } = req.body
 
 		try {  
-		// basic validation
-		if (!_id || !_id_newPosition || !_id_menu_oldPosition || !_menuSwapped) {
-			throw new Error('Something went wrong while updating the menu item’s position.')
-		}
-
-		// update link position value in db
-		await db.Links.updateOne({_id}, {position: _id_newPosition})
-		// then update the link whose position was swapped
-		await db.Links.updateOne({_id: _menuSwapped}, {position: _id_menu_oldPosition})
-
-		res.status(200).end()
-
-		} catch (error) {
-			console.error(error)
-			res.status(400).end()
-		}
-	})
-
-	// CREATE SUBMENU - POST
-	// =============================================================
-	app.post("/addsubmenu", async (req, res) => {
-		let { _id, originalRoute, owner, permalink, reference, slug, target, text, route } = req.body
-
-		try {
-			// basic validation
-			if (!_id || !slug) {
-				throw new Error('Please select a submenu item when adding submenu.')
+			// guard clause
+			if (!_ids || !positions) throw new Error('Something went wrong while sorting menu items.')
+			
+			parent = parent ? parent : null;
+			const children = {$in: moved_item_id}
+			const positions_formatted = positions.map((position) => parseInt(position, 10) )
+			const positions_sorted = positions_formatted.sort((a, b) => a - b)
+			const queries = positions_sorted.map((position, i) => { return { updateOne: {filter: { _id: _ids[i] }, update: { $set: {position, parent} }} } } )
+			queries.unshift({ updateOne: {filter: { children }, update: { $pull: { children } }} } )
+			// add query for applying children to parent
+			if (parent) {
+				queries.push({ updateOne: {filter: { _id: parent }, update: { $set: {children: _ids} }} })
 			}
 
-			let is_ref = reference == "true"
-			permalink = permalink ? permalink : null
-			target = target ? target : '_self'
-
-			if (is_ref && originalRoute !== route) {
-				is_ref = false
-			}
-
-			// create link in db
-			const createdLink = await db.Links.create({is_ref, owner, permalink, route, target, text})
-			const _submenu = createdLink.id
-			// add new link to its owner’s submenu array
-			await db.Links.updateOne({_id}, {$push: {submenu: _submenu}})
-
-			req.flash( 'admin_success', 'Submenu item successfully added.' )
-
-		} catch (error) {
-			console.error(error)
-			const errorMessage = error.errmsg || error.toString()
-			req.flash('admin_error', errorMessage)
-
-		} finally {
-			res.redirect(`/admin/menus/edit/${slug}`)
-		}
-	})
-
-	// UPDATE SUBMENU ITEM POSITION - PUT
-	// =============================================================
-	app.put("/updatesubmenuitemposition", async (req, res) => {
-		const { _id, _id_newPosition, _id_submenu_oldPosition, _submenuSwapped } = req.body
-
-		try {
-			// basic validation
-			if (!_id || !_id_newPosition || !_id_submenu_oldPosition || !_submenuSwapped) {
-				throw new Error('Something went wrong while updating the submenu item’s position.')
-			}
-
-			// update position of submenu in db
-			await db.Links.updateOne({_id}, {sub_position: _id_newPosition})
-			// update position of swapped submenu in db
-			await db.Links.updateOne({_id: _submenuSwapped}, {sub_position: _id_submenu_oldPosition})
-
+			// update positions in db
+			await db.Links.bulkWrite(queries)
+			// respond to client
 			res.status(200).end()
 
 		} catch (error) {
@@ -323,47 +264,37 @@ module.exports = (app, db, slugify, Utils) => {
 		}
 	})
 
-	// DELETE MENU ITEM - POST
+	// DELETE MENU ITEM - DELETE
 	// =============================================================
-	app.post("/deletemenuitem", async (req, res) => {
-		const { _id, slug } = req.body
+	app.delete("/deletemenuitem", async (req, res) => {
+		const { _id } = req.body
 
 		try {
-			// delete menu item in db
-			deletedLink = await db.Links.findByIdAndDelete({_id})
-			// delete all links in this menu item’s submenu
-			await db.Links.deleteMany({_id: {$in: deletedLink.submenu} })
+			// guard clause
+			if (!_id) throw new Error('Something went wrong while deleting a menu item.')
 
-			req.flash( 'admin_success', 'Menu item successfully deleted.' )
+			const queries = []
+			const children = {$in: _id}
+
+			// push delete query
+			queries.push({ deleteOne: { filter: { _id } } })
+			// push parent removal query			
+			queries.push({ updateMany: { filter: { parent: _id }, update: { $set: {parent: null} } } })
+			// push children removals
+			queries.push({ updateMany: {filter: { children }, update: { $pull: { children } }} })
+
+			// update positions in db
+			const bulk_update = await db.Links.bulkWrite(queries)
+
+			// respond to client
+			res.status(200).json(bulk_update)
 
 		} catch (error) {
 			console.error(error)
-			const errorMessage = error.errmsg || error.toString()
-			req.flash('admin_error', errorMessage)
-			
-		} finally {
-			res.redirect(`/admin/menus/edit/${slug}`)
-		}
-	})
-
-	// DELETE SUBMENU ITEM - POST
-	// =============================================================
-	app.post("/deletesubmenuitem", async (req, res) => {
-		const { _id, slug, _submenu } = req.body
-
-		try {
-			// pull menu item from menu
-			await db.Links.findByIdAndUpdate({_id}, {$pull: {submenu: _submenu}})
-
-			req.flash( 'admin_success', 'Submenu item successfully deleted.' )
-
-		} catch (error) {
-			console.error(error)
-			const errorMessage = error.errmsg || error.toString()
-			req.flash('admin_error', errorMessage)
-
-		} finally {
-			res.redirect(`/admin/menus/edit/${slug}`)
+			res.status(500).json({
+				"response": error,
+				"message": "Error occurred while deleting a menu item."
+			})
 		}
 	})
 

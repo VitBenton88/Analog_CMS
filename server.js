@@ -100,27 +100,20 @@ if (production) {
 	app.set('trust proxy', true)
 	// cache templates
 	app.enable('view cache')
-	// store sessions in mongodb
-	app.use(session({
-		saveUninitialized: true,
-		resave: true,
-		secret: 'keyboardCats',
-		store: new MongoStore( {url: process.env.MONGODB_URI || `mongodb://localhost/analog` } )
-	}))
+
 } else {
 	// permit access to public file
 	app.use(express.static( path.join(__dirname, '/public') ))
-	// store session in default memory cache
-	app.use(session({
-		secret: 'keyboardCats',
-		resave: true,
-		saveUninitialized: true,
-		rolling: true,
-		cookie: {
-			maxAge: 3600000
-		}
-	}))
 }
+
+// store sessions in mongodb
+app.use(session({
+	saveUninitialized: true,
+	resave: true,
+	secret: 'keyboardCats',
+	store: new MongoStore( {url: process.env.MONGODB_URI || `mongodb://localhost/analog` } ),
+	ttl: 1 * 24 * 60 * 60 // = 1 day.
+}))
 
 // sets up Passport middleware
 // =============================================================

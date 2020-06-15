@@ -63,9 +63,7 @@ module.exports = (app, db, Utils) => {
 
         try {
             // some basic validation, make sure source and target are not identical
-            if (source === target) {
-                throw new Error('Source and target cannot be the same.')
-            }
+            if (source === target) throw new Error('Source and target cannot be the same.')
 
             // some basic validation, make sure source & target start with backslash
             if ( source.charAt(0) !== "/" ) {
@@ -104,9 +102,7 @@ module.exports = (app, db, Utils) => {
 
         try {
             // some basic validation, make sure source and target are not identical
-            if (source === target) {
-                throw new Error('Source and target cannot be the same.')
-            }
+            if (source === target) throw new Error('Source and target cannot be the same.')
             
             // some basic validation, make sure source & target start with backslash
             if ( source.charAt(0) !== "/" ) {
@@ -180,7 +176,7 @@ module.exports = (app, db, Utils) => {
             const flashMsg = deleteQuery ? 'Redirects successfully deleted.' : 'Bulk edit successful.'
 
             req.flash('admin_success', flashMsg)
-            res.send(true);
+            res.send(true)
             
         } catch (error) {
             console.error(error)
@@ -198,7 +194,6 @@ module.exports = (app, db, Utils) => {
         try {
             // delete in db
             await db.Redirects.deleteOne({ _id })
-
             req.flash( 'admin_success', 'Redirect successfully deleted.' )
 
         } catch (error) {

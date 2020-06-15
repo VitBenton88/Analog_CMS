@@ -13,9 +13,7 @@ module.exports = (app, db, Recaptcha) => {
             const { site_key, secret_key } = recaptchaConfig
 
             // if reCAPTCHA config is not setup go to next route handler ...
-            if ( !site_key || !secret_key ) {
-                return next()
-            }
+            if ( !site_key || !secret_key ) return next()
 
             // capture form id
             const formId = originalUrl.substr(originalUrl.lastIndexOf('/') + 1)
@@ -23,14 +21,10 @@ module.exports = (app, db, Recaptcha) => {
             const form = await db.Forms.findById(formId).lean()
 
             // if, for some reason, no form is found, throw error, this should not proceed any further
-            if ( !form ) {
-                throw new Error('Message cannot be sent.')
-            }
+            if ( !form ) throw new Error('Message cannot be sent.')
 
             // if form is set to ignore recaptcha, go to next route handler ...
-            if ( !form.settings.recaptcha ) {
-                return next()
-            }
+            if ( !form.settings.recaptcha ) return next()
 
             const recaptcha = new Recaptcha(site_key, secret_key)
             // fire verification

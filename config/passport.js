@@ -12,9 +12,7 @@ const verifyUsernameAndPasswordCallback = async (username, password, done) => {
         // lookup user, user can provide username or password
         const user = await db.Users.findOne({ $or: [{ username }, { email: username }] }).lean()
         // if user does not exist, reject
-        if (!user) {
-            return done(null, false, { message: "Incorrect username or password." })
-        }
+        if (!user) return done(null, false, { message: "Incorrect username or password." })
 
         // complete authentication
         done(null, user)

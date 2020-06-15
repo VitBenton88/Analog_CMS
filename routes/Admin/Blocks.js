@@ -84,9 +84,7 @@ module.exports = (app, db, slugify, Utils) => {
 
 		try {
 			// basic validation
-			if (!name) {
-				throw new Error('Name not provided. Please fill out all fields when adding a block.')
-			}
+			if (!name) throw new Error('Name not provided. Please fill out all fields when adding a block.')
 
 			active = active == "on" ? true : false
 			global = global == "on" ? true : false
@@ -125,7 +123,7 @@ module.exports = (app, db, slugify, Utils) => {
 
 		try {      
 			// query db
-			const block = await db.Blocks.findById({ _id: params.id }).lean()
+			const block = await db.Blocks.findById(params.id).lean()
 
 			res.render("admin/edit/block", {
 				block,
@@ -149,9 +147,7 @@ module.exports = (app, db, slugify, Utils) => {
 
 		try {
 			// basic validation
-			if (!name) {
-				throw new Error('Name not provided. Please fill out all fields when adding a block.')
-			}
+			if (!name) throw new Error('Name not provided. Please fill out all fields when adding a block.')
 
 			active = active == "on" ? true : false
 			global = global == "on" ? true : false
@@ -216,11 +212,10 @@ module.exports = (app, db, slugify, Utils) => {
 			}
 
 			// if this is a delete query, pull deleted block ids from associations
-			await db.Posts.updateMany({ blocks }, { $pull: {blocks} } )
 			await db.Pages.updateMany({ blocks }, { $pull: {blocks} } )
 
 			req.flash( 'admin_success', 'Blocks successfully deleted.' )
-			res.send(true);
+			res.send(true)
 
 		} catch (error) {
 			console.error(error)
@@ -237,10 +232,9 @@ module.exports = (app, db, slugify, Utils) => {
 
 		try {
 			// delete block in db
-			await db.Blocks.findOneAndDelete({_id})
+			await db.Blocks.deleteOne({_id})
 			// then pull deleted block ids from associations
 			const blocks = {$in: _id}
-			await db.Posts.updateMany({blocks}, {$pull: {blocks} })
 			await db.Pages.updateMany({blocks}, {$pull: {blocks} })
 
 			req.flash( 'admin_success', 'Block successfully deleted.' )

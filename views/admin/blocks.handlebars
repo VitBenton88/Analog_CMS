@@ -1,4 +1,4 @@
-<div class="container-fluid pages page">
+<div class="container-fluid blocks page">
   <div class="row">
 
     {{> admin/components/menus/main menu-blocks=true}}
@@ -70,7 +70,6 @@
                       <th><a href="?orderBy=name&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Name</a></th>
                       <th><a href="?orderBy=slug&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Slug</a></th>
                       <th><a href="?orderBy=active&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Status</a></th>
-                      </th>
                       <th><a href="?orderBy=global&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Global</a></th>
                       <th>Actions</th>
                     </tr>

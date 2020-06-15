@@ -6,9 +6,7 @@ const Permalinks = {
 
 	validate: (route = '', is_redirect_src = false) => new Promise( async (resolve, reject) => {
 		try {
-			if ( !route ) {
-				throw new Error('Validate method expects route.')
-			}
+			if ( !route ) throw new Error('Validate method expects route.')
 
 			const permalink = await db.Permalinks.find({ permalink: route }).lean()
 

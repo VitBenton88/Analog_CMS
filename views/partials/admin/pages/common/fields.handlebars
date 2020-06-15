@@ -1,0 +1,228 @@
+{{#if fieldGroups}}
+{{#each fieldGroups}}
+{{#with this}}
+    <div id="field_group_{{_id}}" class="row field_group{{#if sortable}} sortable{{/if}}{{#if repeater}} repeater{{/if}}">
+        <div class="col-12 mt-3">
+            <div class="card">
+                <div class="card-header">{{name}}</div>
+                <div class="card-body">
+                    {{#if fields}}
+                        <div class="repeater_form">
+                        {{#each fields}}
+                            {{#with this}}
+                                <div class="field_wrap mb-3">
+                                    {{!-- label --}}
+                                    <label for="{{_id}}">{{title}}{{#if required}} *{{/if}}</label>
+
+                                    {{!-- wysiwyg --}}
+                                    {{#eq type 'wysiwyg'}}
+                                        <textarea id="{{_id}}" name="{{#unless ../repeater}}{{_id}}_field{{/unless}}" class="form-control summernote-editor field {{type}}{{#if required}} required{{/if}}" data-title="{{title}}" 
+                                        {{#if description}} aria-describedby="{{_id}}_help"{{/if}}{{#if required}}{{#unless ../repeater}} required{{/unless}}{{/if}}>{{#if field_value}}{{field_value}}{{else}}{{default_val}}{{/if}}</textarea>
+                                    {{/eq}}
+
+                                    {{!-- selects --}}
+                                    {{#if is_select}}
+                                        {{!-- handle radios & checkboxes --}}
+                                        {{#isnt type 'select'}}
+                                            {{#each parameters.select.options}}
+                                                <div class="form-check">
+                                                    <input
+                                                    {{#unless ../repeater}}
+                                                        {{#eq ../default_val this}} checked{{/eq}} 
+                                                        {{#eq ../field_value this}} checked{{/eq}}
+                                                    {{/unless}}
+                                                    class="form-check-input field {{type}}{{#if ../required}} required{{/if}}" 
+                                                    type="{{../type}}" value="{{this}}" 
+                                                    name="{{#unless ../repeater}}{{@../../key}}_{{@../key}}_field{{/unless}}" 
+                                                    id="field_{{@../../key}}_{{@../key}}_{{@key}}" 
+                                                    data-title="{{title}}" 
+                                                    {{#if description}} aria-describedby="field_{{@../../key}}_{{@../key}}_help"{{/if}}
+                                                    {{#if ../../required}}{{#unless ../repeater}} required{{/unless}}{{/if}}>
+                                                    <label class="form-check-label" for="field_{{@../../key}}_{{@../key}}_{{@key}}">{{itemAt ../parameters.select.labels @key}}</label>
+                                                </div>
+                                            {{/each}}
+                                            {{!-- field description --}}
+                                            {{#if description}}
+                                                <small id="{{_id}}_help" class="form-text text-muted mb-3">{{description}}</small>
+                                            {{/if}}
+                                        {{/isnt}}
+
+                                        {{!-- handle selects --}}
+                                        {{#eq type 'select'}}
+                                            <select 
+                                            id="{{_id}}"
+                                            name="{{#unless ../repeater}}{{_id}}_field{{/unless}}" 
+                                            class="custom-select field {{type}}{{#if required}} required{{/if}}" 
+                                            data-title="{{title}}"
+                                            {{#if description}} aria-describedby="{{_id}}_help"{{/if}}
+                                            {{#if required}}{{#unless ../repeater}} required{{/unless}}{{/if}}>
+                                                <option selected disabled value>Select</option>
+                                                {{#each parameters.select.options}}
+                                                    <option value="{{this}}"{{#unless ../repeater}}{{#eq ../field_value this}} selected{{/eq}}{{#eq ../default_val this}} selected{{/eq}}{{/unless}}>{{itemAt ../parameters.select.labels @key}}</option>
+                                                {{/each}}
+                                            </select>
+                                            {{!-- field description --}}
+                                            {{#if description}}
+                                                <small id="{{_id}}_help" class="form-text text-mute mb-3">{{description}}</small>
+                                            {{/if}}
+                                        {{/eq}}
+                                    {{/if}}
+
+                                    {{!-- datepicker --}}
+                                    {{#eq type 'date'}}
+                                        <input type="date" name="{{#unless ../repeater}}{{_id}}_field{{/unless}}" class="form-control field {{type}}{{#if required}} required{{/if}}" id="{{_id}}" value="{{#unless ../repeater}}{{#if field_value}}{{field_value}}{{else}}{{default_val}}{{/if}}{{/unless}}"
+                                         data-title="{{title}}" {{#if description}} aria-describedby="{{_id}}_help"{{/if}}{{#if required}}{{#unless ../repeater}} required{{/unless}}{{/if}}>
+                                    {{/eq}}
+
+                                    {{!-- colorpicker --}}
+                                    {{#eq type 'colorpicker'}}
+                                        <input type="color" name="{{#unless ../repeater}}{{_id}}_field{{/unless}}" class="form-control field {{type}}{{#if required}} required{{/if}}" id="{{_id}}" data-title="{{title}}" 
+                                        value="{{#unless ../repeater}}{{#if field_value}}{{field_value}}{{else}}{{default_val}}{{/if}}{{/unless}}"{{#if description}} aria-describedby="{{_id}}_help"{{/if}}{{#if required}}{{#unless ../repeater}} required{{/unless}}{{/if}}>
+                                    {{/eq}}
+
+                                    {{!-- number --}}
+                                    {{#eq type 'number'}}
+                                        <input type="number" name="{{#unless ../repeater}}{{_id}}_field{{/unless}}" class="form-control field {{type}}{{#if required}} required{{/if}}" id="{{_id}}" min="{{parameters.number.min}}" max="{{parameters.number.max}}" step="{{parameters.number.step}}"
+                                         data-title="{{title}}" value="{{#unless ../repeater}}{{#if field_value}}{{field_value}}{{else}}{{default_val}}{{/if}}{{/unless}}"{{#if description}} aria-describedby="{{_id}}_help"{{/if}}{{#if required}}{{#unless ../repeater}} required{{/unless}}{{/if}}>
+                                    {{/eq}}
+
+                                    {{!-- text --}}
+                                    {{#eq type 'text'}}
+                                        <input type="text" value="{{#unless ../repeater}}{{#if field_value}}{{field_value}}{{else}}{{default_val}}{{/if}}{{/unless}}" name="{{#unless ../repeater}}{{_id}}_field{{/unless}}" class="form-control field {{type}}{{#if required}} required{{/if}}" id="{{_id}}" data-title="{{title}}"
+                                        {{#if description}} aria-describedby="{{_id}}_help"{{/if}}{{#if required}}{{#unless ../repeater}} required{{/unless}}{{/if}}>
+                                    {{/eq}}
+
+                                    {{!-- textarea --}}
+                                    {{#eq type 'textarea'}}
+                                        <textarea id="{{_id}}" name="{{#unless ../repeater}}{{_id}}_field{{/unless}}" class="form-control field {{type}}{{#if required}} required{{/if}}" rows="{{parameters.textarea.rows}}" data-title="{{title}}"
+                                        {{#if description}} aria-describedby="{{_id}}_help"{{/if}}{{#if required}}{{#unless ../repeater}} required{{/unless}}{{/if}}>{{#unless ../repeater}}{{#if field_value}}{{field_value}}{{else}}{{default_val}}{{/if}}{{/unless}}</textarea>
+                                    {{/eq}}
+                                    
+                                    {{!-- upload --}}
+                                    {{#eq type 'upload'}}
+                                        <input type="file" name="{{#unless ../repeater}}{{_id}}_field{{/unless}}" class="form-control field {{type}}{{#if required}} required{{/if}}" id="{{_id}}" accept="{{#if parameters.upload.images}}image/*, {{/if}}{{#if parameters.upload.audio}}audio/*, {{/if}}{{#if parameters.upload.video}}video/*{{/if}}"
+                                         data-title="{{title}}" {{#if description}} aria-describedby="{{_id}}_help"{{/if}}{{#if required}}{{#unless ../repeater}} required{{/unless}}{{/if}}>
+                                        {{#if field_value }}
+                                            {{#unless ../repeater}}
+                                                <img class="field-upload-thumb" src="{{field_value.path}}" alt="{{@../key}}_{{@key}}_field preview">
+                                                <p class="image-upload-thumb-rm field-upload-del mt-3" data-id="{{field_value_id}}"><span>Remove &otimes;</span></p>
+                                            {{/unless}}
+                                        {{/if}}
+                                    {{/eq}}
+
+                                   {{!-- fields helper data --}}
+                                    {{#if ../repeater}}
+                                        {{!-- field id --}}
+                                        {{#if field_value_id }}
+                                            <div class="admin_hidden_ui_ele" id="{{_id}}_field_value_id" data-value="{{field_value_id}}"></div>
+                                        {{/if}}
+                                        {{!-- field type --}}
+                                        <div class="admin_hidden_ui_ele" id="{{_id}}_type" data-value="{{_id}}"></div>
+                                        {{!-- field group --}}
+                                        <div class="admin_hidden_ui_ele" id="{{_id}}_group" data-value="{{../_id}}"></div>
+                                        {{!-- field type (string) --}}
+                                        <div class="admin_hidden_ui_ele" id="{{_id}}_fieldtype" data-value="{{type}}"></div>
+
+                                    {{else}}
+
+                                        {{!-- field id --}}
+                                        {{#if field_value_id }}
+                                            <input type="hidden" name="{{_id}}_field_value_id" value="{{field_value_id}}">
+                                        {{/if}}
+                                        {{!-- field index --}}
+                                        <input type="hidden" name="field_index" value="{{_id}}">
+                                        {{!-- field type --}}
+                                        <input type="hidden" name="{{_id}}_type" value="{{_id}}">
+                                        {{!-- field group --}}
+                                        <input type="hidden" name="{{_id}}_group" value="{{../_id}}">
+                                        {{!-- field type (string) --}}
+                                        <input type="hidden" name="{{_id}}_fieldtype" value="{{type}}">
+                                    {{/if}}
+
+                                    {{!-- field description --}}
+                                    {{#if description}}{{#unless is_select}}
+                                        <small id="{{_id}}_help" class="form-text text-muted">{{{description}}}</small>
+                                    {{/unless}}{{/if}}
+
+                                    {{!-- media select elements for upload field --}}
+                                    {{#eq type 'upload'}}
+                                        <button type="button" class="btn btn-info mt-3 analog_media_select" data-target="#edia_select_{{_id}}">Select Media</button>
+                                        <input id="{{_id}}_media_select" type="hidden" class="analog_media_select_input" name="{{#unless ../repeater}}{{_id}}_media_select{{/unless}}" data-title="{{title}}">
+                                        <img id="media_select_img_{{_id}}" class="analog_media_select_img admin_hidden_ui_ele mt-3" src="" alt="Select Media Preview">
+                                        <p class="image-upload-thumb-rm admin_hidden_ui_ele analog_media_select_remove"><span>Remove &otimes;</span></p>
+                                    {{/eq}}
+                                </div>
+                            {{/with}}
+                        {{/each}}
+                        </div>
+
+                        {{#if repeater}}
+                            <button type="button" class="btn btn-primary add_repeater_field mt-3" data-parent="#field_group_{{_id}}" data-table="#repeater_table_{{_id}}">Add Entry</button>
+                            <table id="repeater_table_{{_id}}" class="table table-striped repeater_table mt-4"{{#unless repeaters}} style="display: none;"{{/unless}}>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Content</th>
+                                        <th scope="col">Edit</th>
+                                        <th scope="col">Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="field_group_list_{{_id}}">
+                                    {{#each repeaters}}
+                                    {{#with this}}
+                                        <tr id="{{_id}}" class="existent_repeater" data-position="{{position}}">
+                                            <th scope="row">{{plus @key 1}}</th>
+                                            <td class="existent_repeater_field">
+                                                {{#each values}}
+                                                    {{#with this}}
+                                                        <p id="{{_id}}" class="value {{type.type}}{{#if file}} file{{/if}}" data-value="{{value}}" data-type="{{type._id}}"><strong>{{type.title}}:</strong> 
+                                                            {{#if file}}
+                                                                <img class="field-upload-thumb sm" src="{{value}}" alt="repeater field file thumbnail" data-id="{{file}}">
+                                                            {{else}}
+                                                                <span>{{value}}</span>
+                                                            {{/if}}
+                                                        </p>
+                                                    {{/with}}
+                                                {{/each}}
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-info btn-sm edit_repeater_field" data-group="#field_group_{{../_id}}" 
+                                                data-toggle="modal" data-target="#edit_repeater_modal">Edit</button>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger btn-sm delete_repeater_field" data-id="{{_id}}">Delete</button>
+                                            </td>
+                                        </tr> 
+                                    {{/with}}
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        {{/if}}
+                    {{else}}
+                        <p>No fields configured for this field group.</p>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+{{/with}}
+{{/each}}
+{{/if}}
+
+<div class="modal fade" id="edit_repeater_modal" tabindex="-1" role="dialog" aria-labelledby="edit_repeater_modal_label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="edit_repeater_modal_label">Edit Repeater</h5>
+                <button type="button" class="close edit_repeater_modal_close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary cancel_edit_repeater_field" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary save_edit_repeater_field">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

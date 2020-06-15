@@ -1,0 +1,226 @@
+<div class="container-fluid edit-field page">
+  <div class="row">
+
+    {{> admin/components/menus/main menu-fields=true}}
+
+    <div class="col-12 col-lg-10">
+      <div class="row no-gutters">
+
+        {{> admin/components/heading heading="Edit Field Group" slug=fieldGroup.slug}}
+
+        {{> admin/components/notifications}}
+
+        <div class="container page-body">
+
+          {{#with fieldGroup}}
+          <form action="/fields/group/update" method="POST" id="updatefieldgroup">
+            <div class="form-row">
+              <div class="col-12 col-sm-6 form-group">
+                <label for="create_fieldgroup_name">Name of field group.</label>
+                <input name="name" type="text" id="create_fieldgroup_name" class="form-control" placeholder="Enter name ..." value="{{name}}" required>
+              </div>
+              <div class="col-12 col-sm-6 form-group">
+                <label for="create_fieldgroup_slug">Slug of field group.</label>
+                <input name="slug" type="text" id="create_fieldgroup_slug" class="form-control" placeholder="Enter slug ..." value="{{slug}}" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-12 col-lg-6 form-group">
+                <label for="create_fieldgroup_for_type">Applies to</label>
+                <select class="custom-select" id="create_fieldgroup_for_type" name="recipient" required>
+                  <option selected disabled value>Select</option>
+                  <option value="Pages"{{#eq recipient "Pages"}} selected{{/eq}}>Pages</option>
+                  <option value="Posts"{{#eq recipient "Posts"}} selected{{/eq}}>Posts</option>
+                  <option value="{{#if ../templates}}Template{{/if}}"{{#eq recipient "Template"}} selected{{/eq}}{{#unless ../templates}} disabled{{/unless}}>Template{{#unless ../templates}} (None found){{/unless}}</option>
+                </select>
+              </div>
+              {{#if ../templates}}{{#eq recipient "Template"}}
+              <div id="create_fieldgroup_template_select" class="col-12 col-lg-6 form-group">
+                <label for="condition">Templates</label>
+                <select name="condition" class="form-control custom-select" id="condition">
+                  {{#each ../templates}}
+                    <option value="{{this}}"{{#eq ../condition this}} selected{{/eq}}>{{this}}</option>
+                  {{/each}}
+                </select>
+              </div>
+              {{/eq}}{{/if}}
+            </div>
+            <div class="form-row">
+              <div class="col-12 form-group">
+                  <div class="custom-control custom-switch d-inline-block mr-4">
+                    <input name="active" type="checkbox" class="custom-control-input" id="create_fieldgroup_active"{{#if active}} checked{{/if}}>
+                    <label class="custom-control-label" for="create_fieldgroup_active">Active</label>
+                  </div>
+                  <div class="custom-control custom-switch d-inline-block mr-4">
+                    <input name="repeater" type="checkbox" class="custom-control-input{{#if repeater}} on{{/if}}" id="create_fieldgroup_repeater"{{#if repeater}} checked{{/if}}>
+                    <label class="custom-control-label" for="create_fieldgroup_repeater">Repeater?</label>
+                  </div>
+                  <div class="custom-control custom-switch d-inline-block">
+                    <input name="sortable" type="checkbox" class="custom-control-input" id="create_fieldgroup_sortable"{{#if sortable}} checked{{else if repeater}}{{else}} disabled{{/if}}>
+                    <label class="custom-control-label" for="create_fieldgroup_sortable">Sortable?</label>
+                  </div>
+              </div>
+            </div>
+            <input name="_id" type="hidden" value="{{_id}}">
+          </form>
+
+          <div class="row">
+            <div class="col-12 mt-4">
+              <button type="submit" form="updatefieldgroup" class="btn btn-primary mr-3">Update Field Group</button>
+      
+              <form action="/fields/group/delete" method="POST" class="d-inline-block">
+                <input name="_id" type="hidden" value="{{_id}}">
+                <button type="submit" class="btn btn-danger">Delete Field Group</button>
+              </form>
+
+              <a class="btn btn-outline-warning ml-3" href="/admin/content/fields" role="button">Cancel</a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      {{/with}}
+      <div class="col-12 mb-3">
+        
+        {{> admin/components/accordian name='create' title='Add Field' style="primary" content="admin/pages/add/field"}}
+        
+      </div>
+      
+      {{#with fieldGroup}}
+      {{#if fields}}
+        {{#each fields}}
+        {{#with this}}
+          <div id="field_{{_id}}" class="col-12 mb-4">
+            <div class="card">
+              <div class="card-header">{{title}}</div>
+              <div class="card-body">
+
+                <form action="/field/update" method="POST" id="updatefield">
+                  <div class="col-12 col-md-4 form-group">
+                      <label for="create_field_title">Title</label>
+                      <input type="text" class="form-control" id="create_field_title" name="title" value={{title}} required>
+                  </div>
+
+                  <div class="col-12 col-md-4 form-group">
+                      <label for="create_field_slug">Slug</label>
+                      <input type="text" class="form-control" id="create_field_slug" name="slug" value="{{slug}}">
+                  </div>
+
+                  {{#isnt type "upload"}}
+                    <div class="col-12 col-md-6 form-group">
+                        <label for="create_field_default">Default Value</label>
+                        <input type="{{type}}" class="form-control" id="create_field_default" name="default_val" value="{{default_val}}">
+                    </div>
+                  {{/isnt}}
+
+                  <div class="col-12 col-md-6 form-group">
+                      <label for="create_field_required">Required</label>
+                      <select class="custom-select" id="create_field_required" name="required">
+                        <option selected disabled value>Required?</option>
+                        <option value="true"{{#if required}} selected{{/if}}>Yes</option>
+                        <option value="false"{{#unless required}} selected{{/unless}}>No</option>
+                      </select>
+                  </div>
+
+                  <div class="col-12 col-md-6 form-group">
+                      <label for="create_field_desc">Description</label>
+                      <textarea class="form-control" id="create_field_desc" rows="3" name="description"{{#if is_select}} aria-describedby="create_field_desc_help"{{/if}}>{{description}}</textarea>
+                      {{#if is_select}}
+                        <small id="create_field_desc_help" class="form-text text-muted">For checkboxes, radios, or select fields, list each value following a comma, e.g. option1, option2</small>
+                      {{/if}}
+                  </div>
+
+                  {{#with parameters}}
+                    {{#eq type "textarea"}}
+                      <!-- Textarea Parameters -->
+                      <div id="textarea_rows" class="col-12 col-md-4 form-group field_param">
+                          <label for="create_field_textarea_rows">Textarea Rows</label>
+                          <input type="number" class="form-control" id="create_field_textarea_rows" min="0" name="textarea_rows" value="{{textarea.rows}}">
+                      </div>
+                    {{/eq}}
+
+                    {{#eq type "number"}}
+                      {{#with number}}
+                        <!-- Number Parameters -->
+                        <div class="col-12 col-md-4 form-group number_param field_param">
+                            <label for="create_field_num_min">Number Minimum</label>
+                            <input type="number" class="form-control" id="create_field_num_min" min="0" name="num_min" value="{{min}}">
+                        </div>
+
+                        <div class="col-12 col-md-4 form-group number_param field_param">
+                            <label for="create_field_num_max">Number Maximum</label>
+                            <input type="number" class="form-control" id="create_field_num_max" min="0" name="num_max" value="{{max}}">
+                        </div>
+
+                        <div class="col-12 col-md-4 form-group number_param field_param">
+                            <label for="create_field_num_step">Number Maximum</label>
+                            <input type="number" class="form-control" id="create_field_num_step" min="0" name="num_step" value="{{step}}">
+                        </div>
+                      {{/with}}
+                    {{/eq}}
+
+                    {{#if ../is_select}}
+                      {{#with select}}
+                        <!-- Select, Radio, & Checkbox Parameters -->
+                        <div class="col-12 form-group select_param field_param">
+                            <label for="create_field_select_options">Value Options</label>
+                            <input type="text" class="form-control" id="create_field_select_options" name="select_options" aria-describedby="create_field_select_options_help" value="{{options}}">
+                            <small id="create_field_select_options_help" class="form-text text-muted">Value recorded for selection. List each following a comma, e.g. option1, option2</small>
+                        </div>
+
+                        <div class="col-12 form-group select_param field_param">
+                            <label for="create_field_select_labels">Options Labels</label>
+                            <input type="text" class="form-control" id="create_field_select_labels" name="select_labels" aria-describedby="create_field_select_labels_help" value="{{labels}}">
+                            <small id="create_field_select_labels_help" class="form-text text-muted">Label shown for each option. List each following a comma, e.g. label1, label2</small>
+                        </div>
+                      {{/with}}
+                    {{/if}}
+
+                    {{#eq type "upload"}}
+                      {{#with upload}}
+                        <!-- Upload Parameters -->
+                        <div id="upload_params" class="col-12 form-group field_param">
+                            <div class="custom-control custom-switch">
+                              <input name="upload_images" type="checkbox" class="custom-control-input" id="create_field_upload_images"{{#if images}} checked{{/if}}>
+                              <label class="custom-control-label" for="create_field_upload_images">Allow Image Files?</label>
+                            </div>
+                            <div class="custom-control custom-switch">
+                              <input name="upload_audio" type="checkbox" class="custom-control-input" id="create_field_upload_audio"{{#if audio}} checked{{/if}}>
+                              <label class="custom-control-label" for="create_field_upload_audio">Allow Audio Files?</label>
+                            </div>
+                            <div class="custom-control custom-switch">
+                              <input name="upload_video" type="checkbox" class="custom-control-input" id="create_field_upload_video"{{#if video}} checked{{/if}}>
+                              <label class="custom-control-label" for="create_field_upload_video">Allow Video Files?</label>
+                            </div>
+                        </div>
+                      {{/with}}
+                    {{/eq}}
+                  {{/with}}
+
+                  <div class="col-12">
+                    <input name="_id" type="hidden" value="{{_id}}">
+                    <input name="_owner" type="hidden" value="{{../_id}}">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                  </div>
+                </form>
+
+                <div class="col-12 mt-3">
+                  <form action="/field/delete" method="POST">
+                    <input name="_id" type="hidden" value="{{_id}}">
+                    <input name="_owner" type="hidden" value="{{../_id}}">
+                    <button type="submit" class="btn btn-danger">Delete Field</button>
+                  </form>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        {{/with}}
+        {{/each}}
+      {{/if}}
+      
+      {{/with}}
+    </div>
+  </div>
+</div>

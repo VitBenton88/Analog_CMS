@@ -10,9 +10,7 @@ const Smtp = {
 			const { host, port, secure, user, password } = smtp
 
 			// if smtp config is not 100%, throw error
-			if (!host || !password || !port || !user) {
-				throw new Error('SMTP configuration not complete.')
-			}
+			if (!host || !password || !port || !user) throw new Error('SMTP configuration not complete.')
 
 			const auth = { user, pass: password }
 			let transporterOptions = { host, port, secure, auth }
@@ -41,13 +39,11 @@ const Smtp = {
 			const auth = { user, pass: password }
 			let transporterOptions = { host, port, secure, auth }
 
+			// if smtp config is not 100%, throw error
+			if (!host || !password || !port || !user) throw new Error('SMTP configuration not complete.')
+
 			if (secure) {
 				transporterOptions['tls'] = { rejectUnauthorized: false }
-			}
-
-			// if smtp config is not 100%, throw error
-			if (!host || !password || !port || !user) {
-				throw new Error('SMTP configuration not complete.')
 			}
 
 			let transporter = nodemailer.createTransport(transporterOptions)

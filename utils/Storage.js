@@ -225,35 +225,17 @@ const Media = {
 
     deleteFileAndAssociations: (_id) => new Promise(async (resolve, reject) => {
         try {
+            const update_by = { image: _id }
+            const update_param = { $unset: {image: 1} }
+            
             // delete file record from db
             await db.Media.deleteOne({_id})
-
             // pull this media id from any user record that uses it
-            await db.Users.updateOne({
-                image: _id
-            }, {
-                $unset: {
-                    image: 1
-                }
-            })
-
+            await db.Users.updateMany(update_by, update_param)
             // pull this media id from any page that uses it
-            await db.Pages.updateOne({
-                image: _id
-            }, {
-                $unset: {
-                    image: 1
-                }
-            })
-
-            // pull this media id from any post that uses it
-            await db.Posts.updateOne({
-                image: _id
-            }, {
-                $unset: {
-                    image: 1
-                }
-            })
+            await db.Pages.updateMany(update_by, update_param)
+            // delete field value containing this file
+            await db.FieldValues.deleteMany({file: _id})
 
             resolve()
 

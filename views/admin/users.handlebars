@@ -37,8 +37,7 @@
                   <table class="table table-striped table-responsive-sm mt-5" id="users">
                     <thead>
                       <tr>
-                        <th><a href="?orderBy=username&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Username</a>
-                        </th>
+                        <th><a href="?orderBy=username&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Username</a></th>
                         <th><a href="?orderBy=nickname&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Nickname</a></th>
                         <th><a href="?orderBy=email&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Email</a></th>
                         <th><a href="?orderBy=role&sort={{#if this.sort}}{{this.sort}}{{else}}asc{{/if}}">Role</a></th>
@@ -66,7 +65,7 @@
                 <div class="mt-5"></div>
 
                 {{#eq sessionUser.role "Administrator"}}
-                  {{> admin/components/accordian name='add' title='Add User' style="primary" content="admin/pages/users/add"}}
+                  {{> admin/components/accordian name='add' title='Add User' style="primary" content="admin/pages/add/user"}}
                 {{/eq}}
 
               </div>

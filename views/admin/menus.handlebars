@@ -44,7 +44,7 @@
                                     {{#each menus}}
                                     {{#with this}}
                                         <tr>
-                                            <td><a href="menus/edit/{{slug}}">{{name}}</a></td>
+                                            <td><a href="menus/edit/{{_id}}">{{name}}</a></td>
                                             <td>{{slug}}</td>
                                             <td>
                                                 <div class="dropdown">
@@ -52,7 +52,7 @@
                                                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                                                         aria-expanded="false">Select</button>
                                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                        <a class="dropdown-item" href="menus/edit/{{slug}}">Edit</a>
+                                                        <a class="dropdown-item" href="menus/edit/{{_id}}">Edit</a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -81,9 +81,8 @@
                                 <form action="/addmenu" method="POST" id="addmenu">
                                     <div class="form-group">
                                         <label for="title">Add Menu</label>
+                                        <input name="name" class="form-control" type="text" aria-describedby="name-help" placeholder="Enter name of menu ..." required>
                                         <small id="name-help" class="form-text text-muted">Name of menu.</small>
-                                        <input name="name" class="form-control" type="text" aria-describedby="name-help"
-                                            placeholder="Enter name of menu ..." required>
                                     </div>
                                     <button type="submit" class="btn btn-success btn-block btn-lg">Create</button>
                                 </form>
