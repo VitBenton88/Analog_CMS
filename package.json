@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@google-cloud/storage": "^5.1.1",
-    "aws-sdk": "^2.704.0",
+    "aws-sdk": "^2.706.0",
     "bcrpyt": "^2.0.0",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
