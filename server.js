@@ -14,6 +14,7 @@ const GoogleAuthenticator = require('passport-2fa-totp').GoogeAuthenticator
 const helpers = require('handlebars-helpers')()
 const analogHelpers = require('./config/handlebarsHelpers.js')
 const database = require('./config/db')
+const json2csv = require("json2csv")
 const notp = require('notp');
 const Recaptcha = require('express-recaptcha').RecaptchaV3
 const passport = require('passport')
@@ -111,7 +112,7 @@ app.use(session({
 	saveUninitialized: true,
 	resave: true,
 	secret: 'keyboardCats',
-	store: new MongoStore( {url: process.env.MONGODB_URI || `mongodb://localhost/analog` } ),
+	store: new MongoStore( {url: process.env.DB_URI || `mongodb://localhost/analog` } ),
 	ttl: 1 * 24 * 60 * 60 // = 1 day.
 }))
 
@@ -161,7 +162,7 @@ require("./routes/Frontend")(app, bcrypt, db, passport, Recaptcha, Utils, valida
 
 // import Admin Routes
 // =============================================================
-require("./routes/Admin")(app, bcrypt, db, GoogleAuthenticator, notp, slugify, Utils, validator)
+require("./routes/admin")(app, bcrypt, db, json2csv, GoogleAuthenticator, notp, slugify, Utils, validator)
 
 // setup 404 handling
 // =============================================================

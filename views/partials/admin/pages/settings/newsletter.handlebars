@@ -1,0 +1,28 @@
+<form action="/newsletter/update" method="POST">
+    {{#with site_data.settings.newsletter}}
+        <div class="form-group">
+            <label for="redirect">Redirect source</label>
+            <input name="redirect" id="redirect" class="form-control" aria-describedby="redirectHelp" placeholder="Enter url ..." value="{{redirect}}"/>
+            <small id="redirectHelp" class="form-text text-muted">The URL the user will be redirected to after a successful signup. Leave blank to redirect to same page.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="newsletter_success_msg">Success message</label>
+            <input id="newsletter_success_msg" type="text" name="success_msg" class="form-control" aria-describedby="newsletter_success_msg_help" placeholder="Enter success message" value="{{success_msg}}">
+            <small id="newsletter_success_msg_help" class="form-text text-muted">The message the user will see after a successful signup. Leave blank for generic message.</small>
+        </div>
+        <div class="form-group">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="newsletter_recaptcha" name="recaptcha" aria-describedby="recaptchaHelp"{{#if recaptcha}} checked{{/if}}{{#unless ../recaptcha_config}} disabled{{/unless}}/>
+                <label class="custom-control-label" for="newsletter_recaptcha">Protect with reCAPTCHA</label>
+                {{#unless ../recaptcha_config}}
+                    <br>
+                    <small id="recaptchaHelp" className="form-text text-muted">reCAPTCHA is currently not configured.</small>
+                {{/unless}}
+            </div>
+        </div>
+    {{/with}}
+
+    <input name="_id" type="hidden" value="{{site_data._id}}">
+    <button type="submit" class="btn btn-success btn-lg">Update</button>
+</form>

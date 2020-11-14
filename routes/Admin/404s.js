@@ -78,9 +78,13 @@ module.exports = (app, db, Utils) => {
 	// DELETE 404 - POST
 	// =============================================================
 	app.post("/delete404", async (req, res) => {
+		const { _id } = req.body
+
 		try {
+            // guard clause
+            if ( !_id ) throw new Error('Something went wrong while deleting a 404 record. Please try again.')
 			// db query
-			await db.PagesNotFound.deleteOne({_id: req.body._id})
+			await db.PagesNotFound.deleteOne({_id})
 
 			req.flash( 'admin_success', '404 record successfully deleted.' )
 

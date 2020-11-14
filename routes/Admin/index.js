@@ -1,4 +1,4 @@
-module.exports = (app, bcrypt, db, GoogleAuthenticator, notp, slugify, Utils, validator) => {
+module.exports = (app, bcrypt, db, json2csv, GoogleAuthenticator, notp, slugify, Utils, validator) => {
 	require("./404s.js")(app, db, Utils)
 	require("./Blocks.js")(app, db, slugify, Utils)
 	require("./Contact.js")(app, db, Utils)
@@ -9,6 +9,7 @@ module.exports = (app, bcrypt, db, GoogleAuthenticator, notp, slugify, Utils, va
 	require("./Initialize.js")(app, bcrypt, db)
 	require("./Media.js")(app, db, Utils)
 	require("./Menus.js")(app, db, slugify, Utils)
+	require("./Newsletter.js")(app, db, json2csv, Utils, validator)
 	require("./Pages.js")(app, db, slugify, Utils)
 	require("./Redirects.js")(app, db, Utils)
 	require("./Summernote.js")(app, Utils)

@@ -230,6 +230,9 @@ module.exports = (app, db, slugify, Utils) => {
 			// collect data for render method
 			let render_template = "admin/edit/page"
 			const pageQuery = await db.Pages.findById(_id).populate('permalink')
+
+			if (!pageQuery)  throw new Error('This page does not exist.')
+
 			const page_data = pageQuery.toObject({ getters: true })
 			const { is_post, template } = pageQuery
 			const page_route = page_data.permalink.route

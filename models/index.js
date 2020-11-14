@@ -11,6 +11,7 @@ module.exports = {
 	Media: require("./Media"),
 	Menus: require("./Menus"),
 	Meta: require("./Meta"),
+	Subscribers: require("./Subscribers"),
 	PagesNotFound: require("./PagesNotFound"),
 	Pages: require("./Pages"),
 	Permalinks: require("./Permalinks"),

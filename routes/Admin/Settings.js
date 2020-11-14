@@ -2,14 +2,19 @@ module.exports = (app, db, Utils) => {
 
 	// SETTINGS GET
 	// =============================================================
-	app.get("/admin/settings", (req, res) => {
+	app.get("/admin/settings", async (req, res) => {
 		const { originalUrl, query, site_data, user } = req
 		const { expand } = query
 		const sessionUser = { username: user.username, _id: user._id }
+		// query recaptcha config
+		const recaptcha_query = await db.Recaptcha.findOne().lean()
+		// check if recaptcha is configured
+		const recaptcha_config = !recaptcha_query.site_key || !recaptcha_query.secret_key ? false : true
 
 		res.render("admin/settings", {
 			expand,
 			originalUrl,
+			recaptcha_config,
 			site_data,
 			sessionUser,
 			layout: "admin"
@@ -133,6 +138,27 @@ module.exports = (app, db, Utils) => {
 			
 		} finally {
 			res.redirect('/admin/settings?expand=storage')
+		}
+	})
+
+	// UPDATE REDIRECT SETTINGS - POST
+	// =============================================================
+	app.post("/newsletter/update", async (req, res) => {
+		let { _id, recaptcha, redirect, success_msg } = req.body
+		recaptcha = recaptcha == "on" ? true : false
+
+		try {
+			// db update query
+			await db.Analog.updateOne({ _id }, { 'settings.newsletter.redirect': redirect, 'settings.newsletter.success_msg': success_msg, 'settings.newsletter.recaptcha': recaptcha })
+			req.flash( 'admin_success', 'Newsletter settings successfully updated.' )
+
+		} catch (error) {
+			console.error(error)
+			const errorMessage = error.errmsg || error.toString()
+			req.flash('admin_error', errorMessage)
+
+		} finally {
+			res.redirect('/admin/settings?expand=newsletter')
 		}
 	})
 

@@ -48,6 +48,19 @@ const SettingsSchema = new Schema({
 				projectId: String
 			}
 		}
+	},
+	newsletter: {
+		redirect: {
+			type: String
+		},
+		success_msg: {
+			type: String
+		},
+		recaptcha: {
+			type: Boolean,
+			default: false,
+			required: true
+		}
 	}
 })
 
