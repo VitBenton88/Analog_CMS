@@ -162,7 +162,7 @@ require("./routes/Frontend")(app, bcrypt, db, passport, Recaptcha, Utils, valida
 
 // import Admin Routes
 // =============================================================
-require("./routes/admin")(app, bcrypt, db, json2csv, GoogleAuthenticator, notp, slugify, Utils, validator)
+require("./routes/Admin")(app, bcrypt, db, json2csv, GoogleAuthenticator, notp, slugify, Utils, validator)
 
 // setup 404 handling
 // =============================================================
