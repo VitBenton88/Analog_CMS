@@ -6,7 +6,7 @@ module.exports = (app) => {
 		try {
 			const { originalUrl, method, site_data } = req
 
-			if (!site_data.settings.maintenance || method == "POST") return next()
+			if (!site_data || !site_data.settings.maintenance || method == "POST") return next()
 
 			// allow whitelisted pages to render
 			const whitelisted = ["login", "admin"]
