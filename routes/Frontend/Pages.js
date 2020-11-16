@@ -15,8 +15,8 @@ module.exports = (app, db, Recaptcha, Utils) => {
 		let menus = {}
 
 		try {
-			// make sure to pass along any urls that start with "admin"
-			if ( originalUrl.substring(1, 6) == 'admin' ) return next()
+			// make sure to pass along any urls that start with "admin" or skip if CMS is not configured.
+			if ( !site_data || originalUrl.substring(1, 6) == 'admin' ) return next()
 
 			// handle homepage
 			if (isHomePage) {
