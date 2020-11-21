@@ -11,6 +11,13 @@
         {{> admin/components/notifications}}
 
         <div class="container page-body">
+
+          {{#unless site_data.settings.traffic.log404}}
+            <div class="alert alert-warning" role="alert">
+              404 logging is currently disabled. <a href="/admin/settings?expand=traffic">View settings here.</a>
+            </div>
+          {{/unless}}
+
           <div class="row justify-content-end mb-4">
             <div class="col-12 col-lg-8 col-xl-6 pr-0 d-flex justify-content-end">
               <form id="search404s" class="form-inline">
