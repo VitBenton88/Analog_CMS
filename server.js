@@ -19,6 +19,7 @@ const notp = require('notp');
 const Recaptcha = require('express-recaptcha').RecaptchaV3
 const passport = require('passport')
 const path = require("path")
+var pjson = require('./package.json');
 const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
 const { ensureAuthenticated } = require('./config/auth')
@@ -146,7 +147,7 @@ const Utils = require("./utils")
 
 // import Analog Middleware
 // =============================================================
-require("./routes/Middleware")(app, db, ensureAuthenticated, Recaptcha)
+require("./routes/Middleware")(app, db, ensureAuthenticated, pjson, Recaptcha)
 
 // import Analog Plugins
 // =============================================================
@@ -167,11 +168,15 @@ require("./routes/Admin")(app, bcrypt, db, json2csv, GoogleAuthenticator, notp, 
 // setup 404 handling
 // =============================================================
 app.use( async (req, res) => {
-	const { originalUrl } = req
+	const { originalUrl, site_data } = req
+	const { traffic } = site_data.settings
 
 	try {
-		// update hit count in db
-		await db.PagesNotFound.updateOne({ source: originalUrl }, { source: originalUrl, $inc: { "hits": 1 }}, { upsert: true })
+		// update hit count in db, if applicable
+		if (traffic.log404) {
+			await db.PagesNotFound.updateOne({ source: originalUrl }, { source: originalUrl, $inc: { "hits": 1 }}, { upsert: true })
+		}
+
 		res.redirect('/Error404')
 
 	} catch (error) {

@@ -1,0 +1,10 @@
+{{#with site_data}}
+<form class="updatetraffic" action="/traffic/update" method="POST">
+    <div class="custom-control custom-switch mt-4 mb-4 log404-checkbox">
+        <input type="checkbox" class="custom-control-input" id="log404" name="log404"{{#if settings.traffic.log404}} checked{{/if}}>
+        <label class="custom-control-label" for="log404">Log 404 Hits?</label>
+    </div>
+    <input name="_id" type="hidden" value="{{_id}}">
+    <button type="submit" class="btn btn-success btn-lg">Update</button>
+</form>
+{{/with}}
