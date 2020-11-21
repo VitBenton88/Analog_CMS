@@ -162,4 +162,27 @@ module.exports = (app, db, Utils) => {
 		}
 	})
 
+	// UPDATE TRAFFIC SETTINGS - POST
+	// =============================================================
+	app.post("/traffic/update", async (req, res) => {
+		let { _id, log404 } = req.body
+
+		try {
+			log404 = log404 == "on"
+			const params = {'settings.traffic.log404': log404}
+
+			// db update query
+			await db.Analog.updateOne({_id}, params)
+			req.flash( 'admin_success', 'Site traffic settings successfully updated.' )
+
+		} catch (error) {
+			console.error(error)
+			const errorMessage = error.errmsg || error.toString()
+			req.flash('admin_error', errorMessage)
+
+		} finally {
+			res.redirect('/admin/settings?expand=traffic')
+		}
+	})
+
 }

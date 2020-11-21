@@ -61,6 +61,13 @@ const SettingsSchema = new Schema({
 			default: false,
 			required: true
 		}
+	},
+	traffic: {
+		log404: {
+			type: Boolean,
+			default: false,
+			required: true
+		}
 	}
 })
 
