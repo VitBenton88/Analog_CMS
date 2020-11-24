@@ -4,6 +4,15 @@ const db = require("../models")
 const Storage = require("./Storage")
 
 const Fields = {
+    /**
+     * Helper function for querying the necessary custom fields
+     *
+     * @param {String} `recipient` page type that gets these fields, i.e. "Posts" or "Pages".
+     * @param {String} `template` name of template that gets these fields.
+     * @param {Number} `id` integer that represents database ID of owner.
+     * @return {Array} List of fields with their configurations.
+     */
+
 	get: (recipient, template, owner = null) => new Promise(async (resolve, reject) => {
         try {
             // guard clause
@@ -23,7 +32,8 @@ const Fields = {
                     }
                 }
             }
-            const fieldGroups = await db.FieldGroups.find({ $or }).populate('fields').populate(repeaters_populate).lean()
+            const fieldGroups_query = await db.FieldGroups.find({ $or }).populate('fields').populate(repeaters_populate)
+            const fieldGroups = fieldGroups_query.map(fieldGroup => fieldGroup.toObject( { getters: true } ))
 
             if (!fieldGroups) {
                 return reject(false)

@@ -4,6 +4,13 @@ const db = require("../models")
 const nodemailer = require('nodemailer')
 
 const Smtp = {
+    /**
+     * Helper function for sending emails.
+     *
+     * @param {Object} `mailData` object containing options for message. See: https://nodemailer.com/smtp/
+     * @return {Object} result of SMTP transmission.
+     */
+
 	send: (mailData) => new Promise(async (resolve, reject) => {
 		try {
 			const smtp = await db.Smtp.findOne().lean()
@@ -31,6 +38,12 @@ const Smtp = {
 			reject(new Error(error))
 		}
 	}),
+
+    /**
+     * Helper function for validate SMTP settings.
+     *
+     * @return {Object} result of SMTP connection test.
+     */
 
 	verify: () => new Promise(async (resolve, reject) => {
 		try {

@@ -72,6 +72,10 @@ const FieldsSchema = new Schema({
 		ref: 'FieldGroups', 
 		required: true
 	}
+},
+{
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true }
 })
 
 // virtual for easy identification of select, checkbox, or radio field
