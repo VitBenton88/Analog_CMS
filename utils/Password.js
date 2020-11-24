@@ -1,4 +1,15 @@
 const Password = {
+    /**
+     * Helper function for generating randomly constructed string
+     *
+     * @param {Boolean} `lower` boolean allows or disallows lower-case characters.
+     * @param {Boolean} `upper` boolean allows or disallows upper-case characters.
+     * @param {Boolean} `number` boolean allows or disallows number characters.
+     * @param {Boolean} `symbol` boolean allows or disallows special characters.
+     * @param {Number} `length` integer that sets the character length.
+     * @return {String} Randomly constructed string.
+     */
+    
     generate: (lower = true, upper = true, number = true, symbol = true, length = 16) => {
         let generatedPassword = ''    
         const typesCount = lower + upper + number + symbol

@@ -122,7 +122,14 @@ module.exports = (app, bcrypt, db, GoogleAuthenticator, notp, Utils, validator) 
 
 		} catch (error) {
 			console.error(error)
-			const errorMessage = error.errmsg || error.toString()
+			const { code, errmsg, keyValue } = error
+			let errorMessage = errmsg || error.toString()
+
+			if (code === 11000) {
+				const unique_key = Object.keys(keyValue)[0];
+				errorMessage = `A user already exists that has the value "${keyValue[unique_key]}" for "${unique_key}"`
+			}
+
 			req.flash('admin_error', errorMessage)
 			
 		} finally {
