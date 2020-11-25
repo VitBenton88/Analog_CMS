@@ -6,6 +6,14 @@ const fs = require("fs")
 const { Storage } = require('@google-cloud/storage')
 
 const Media = {
+    /**
+     * Helper function for deleting media files.
+     *
+     * @param {Object} `media` mongoDB media document.
+     * @param {Object} `storageConfig` Analog CMS storage configuration.
+     * @return {Boolean} confirmation of file deletion.
+     */
+
     delete: function (media, storageConfig) {
         let { _id, fileName, key, path } = media
         // storage and value needs to be dynamic, media.storage will be undefined for bulk deletions
@@ -160,6 +168,15 @@ const Media = {
             }
         })
     },
+
+    /**
+     * Helper function for getting the routes to files, returns a variety of paths to work with.
+     *
+     * @param {Object} `fileObj` mongoDB media document.
+     * @param {Boolean} `multipleFileUpload` if this.
+     * @param {Boolean} `multipleFileDeletion` Analog CMS storage configuration.
+     * @return {*} an array of routes or an object of routes.
+     */
     
     getRoute: function (fileObj, multipleFileUpload, multipleFileDeletion) {
         const routesArr = []
@@ -223,6 +240,13 @@ const Media = {
 
     },
 
+    /**
+     * Helper function for deleting media from database.
+     *
+     * @param {Number} `_id` integer that represents database ID of media.
+     * @return {Boolean} confirmation of media deletion.
+     */
+
     deleteFileAndAssociations: (_id) => new Promise(async (resolve, reject) => {
         try {
             const update_by = { image: _id }
@@ -244,6 +268,14 @@ const Media = {
             reject(new Error(error))
         }
     }),
+
+    /**
+     * Helper function for uploading media files and writing to database.
+     *
+     * @param {Object} `fileObj` JavaScript object for media, straight from Express.js request object.
+     * @param {Object} `storageConfig` Analog CMS storage configuration.
+     * @return {Object} JavaScript object with media details.
+     */
 
     write: async function (fileObj, storageConfig) {
         const multipleFileUpload = Array.isArray(fileObj)

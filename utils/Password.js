@@ -1,6 +1,6 @@
 const Password = {
     /**
-     * Helper function for generating randomly constructed string
+     * Helper function for generating randomly constructed string.
      *
      * @param {Boolean} `lower` boolean allows or disallows lower-case characters.
      * @param {Boolean} `upper` boolean allows or disallows upper-case characters.

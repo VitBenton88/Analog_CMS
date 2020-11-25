@@ -5,7 +5,7 @@ const Storage = require("./Storage")
 
 const Fields = {
     /**
-     * Helper function for querying the necessary custom fields
+     * Helper function for querying the necessary custom fields.
      *
      * @param {String} `recipient` page type that gets these fields, i.e. "Posts" or "Pages".
      * @param {String} `template` name of template that gets these fields.
@@ -76,6 +76,16 @@ const Fields = {
             reject(new Error(error))
         }
     }),
+
+    /**
+     * Helper function for updating field values.
+     *
+     * @param {Object} `req` express.js request object.
+     * @param {Number} `id` integer that represents database ID of owner.
+     * @param {Boolean} `in_repeater` if field is part of a repeater field group or not.
+     * @param {Boolean} `update_repeater` if field group is a repeater field group or not.
+     * @return {Object} List of fields with their configurations.
+     */
 
 	update: (req, owner, in_repeater = false, update_repeater = false) => new Promise(async (resolve, reject) => {
         try {
@@ -180,6 +190,13 @@ const Fields = {
             reject(new Error(error))
         }
     }),
+
+    /**
+     * Helper function for building out JS object of fields and their values.
+     *
+     * @param {Number} `owner` integer that represents database ID of owner.
+     * @return {Object} Object organized by field group and all corresponding fields & values.
+     */
 
 	render: (owner) => new Promise(async (resolve, reject) => {
         try {
