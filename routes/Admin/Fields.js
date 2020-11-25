@@ -64,38 +64,6 @@ module.exports = (app, db, slugify, Utils) => {
 		}
 	})
 
-	// CREATE FIELD GROUP - POST
-	// =============================================================
-	app.post("/fields/group/create", async (req, res) => {
-		let { active, condition, recipient, name, repeater, sortable } = req.body
-
-		try {
-			// basic validation
-			if (!name || !recipient) throw new Error('Please provide all required values when creating a new field group.')
-			
-			// format values
-			const sortable_val = sortable == "on"
-			repeater = repeater == "on"
-			active = active == "on"
-			sortable = repeater ? sortable_val : false
-			condition = recipient == "Template" ? condition  : null
-
-			// create slug
-			const slug = slugify(name)
-			// create in db
-			await db.FieldGroups.create({ active, condition, name, slug, repeater, sortable, recipient })
-			req.flash( 'admin_success', 'Field group successfully added.' )
-
-		} catch (error) {
-			console.error(error)
-			const errorMessage = error.errmsg || error.toString()
-			req.flash('admin_error', errorMessage)
-
-		} finally {
-			res.redirect('/admin/content/fields?expand=create')
-		}
-	})
-
 	// UPDATE FIELD GROUP PAGE - GET
 	// =============================================================
 	app.get("/admin/content/fields/edit/:id", async (req, res) => {

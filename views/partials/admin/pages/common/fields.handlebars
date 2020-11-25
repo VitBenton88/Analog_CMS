@@ -32,7 +32,8 @@
                                                         {{#eq ../field_value this}} checked{{/eq}}
                                                     {{/unless}}
                                                     class="form-check-input field {{type}}{{#if ../required}} required{{/if}}" 
-                                                    type="{{../type}}" value="{{this}}" 
+                                                    type="{{../type}}" 
+                                                    value="{{this}}" 
                                                     name="{{#unless ../repeater}}{{@../../key}}_{{@../key}}_field{{/unless}}" 
                                                     id="field_{{@../../key}}_{{@../key}}_{{@key}}" 
                                                     data-title="{{title}}" 
@@ -50,7 +51,7 @@
                                         {{!-- handle selects --}}
                                         {{#eq type 'select'}}
                                             <select 
-                                            id="{{_id}}"
+                                            id="{{_id}}" 
                                             name="{{#unless ../repeater}}{{_id}}_field{{/unless}}" 
                                             class="custom-select field {{type}}{{#if required}} required{{/if}}" 
                                             data-title="{{title}}"

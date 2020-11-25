@@ -2,7 +2,7 @@ const slugify = require('url-slug')
 
 module.exports = {
     /**
-     * Block helper that renders menu with submenu elements
+     * Block helper that renders menu with submenu elements.
      *
      * @param {String} `slug` string associated to menu.
      * @return {String} HTML elements of menu and submenus.
@@ -45,6 +45,13 @@ module.exports = {
         return `<ul id="menu-${slug}" class="nav">${menu.reduce(itemDom, '')}</ul>`
     },
 
+    /**
+     * Helper function for generating HTML body tag classes.
+     *
+     * @param {Object} `pageData` main data object for page.
+     * @return {String} HTML class-safe string.
+     */
+
     generateBodyClasses: (pageData) => {
         let classes = ''
 
@@ -76,6 +83,14 @@ module.exports = {
 
         return classes
     },
+
+    /**
+     * Helper function for generating HTML DOM elements for Analog CMS forms.
+     *
+     * @param {String} `formSlug` slug for form that will be rendered.
+     * @param {Object} `pageData` main data object for page.
+     * @return {String} HTML DOM elements for form.
+     */
 
     form: (formSlug, pageData) => {
         const {captcha, page_data, site_data, url} = pageData.data.root
@@ -172,6 +187,14 @@ module.exports = {
 
     },
 
+    /**
+     * Helper function for running a certain block of code a number of times, i.e. a method for a 'for' loop.
+     *
+     * @param {Number} `n` slug for form that will be rendered.
+     * @param {Object} `block` set of HTML to be repeated.
+     * @return {String} HTML DOM elements for provided block of code.
+     */
+
     times: (n, block) => {
         let accum = ''
         for(let i = 0; i < n; ++i) {
@@ -182,6 +205,16 @@ module.exports = {
         }
         return accum
     },
+
+    /**
+     * Helper function for determining if a value is in a array, and returning a provided value if true .
+     *
+     * @param {Array} `array` JavaScript array data to check.
+     * @param {*} `value` value to check array for.
+     * @param {Number} `index` index to start at when searching array.
+     * @param {*} `returnValueIfTrue` value to return if match is found.
+     * @return {*} provided return value.
+     */
 
     inArray: (array, value, index=0, returnValueIfTrue) => {
         let returnValue

@@ -110,7 +110,7 @@
                   {{#isnt type "upload"}}
                     <div class="col-12 col-md-6 form-group">
                         <label for="create_field_default">Default Value</label>
-                        <input type="{{type}}" class="form-control" id="create_field_default" name="default_val" value="{{default_val}}">
+                        <input type="{{#if is_select}}text{{else}}{{type}}{{/if}}" class="form-control" id="create_field_default" name="default_val" value="{{default_val}}">
                     </div>
                   {{/isnt}}
 
@@ -200,6 +200,7 @@
 
                   <div class="col-12">
                     <input name="_id" type="hidden" value="{{_id}}">
+                    <input name="type" type="hidden" value="{{type}}">
                     <input name="_owner" type="hidden" value="{{../_id}}">
                     <button type="submit" class="btn btn-primary">Update</button>
                   </div>
