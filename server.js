@@ -108,7 +108,7 @@ if (production) {
 	app.use(express.static( path.join(__dirname, '/public') ))
 }
 
-// store sessions in mongodb
+// store sessions in MongoDB
 app.use(session({
 	saveUninitialized: true,
 	resave: true,
@@ -145,45 +145,9 @@ database.connect()
 // =============================================================
 const Utils = require("./utils")
 
-// import Analog Middleware
+// import Express Routes
 // =============================================================
-require("./routes/Middleware")(app, db, ensureAuthenticated, pjson, Recaptcha)
-
-// import Analog Plugins
-// =============================================================
-require("./routes/Plugins")(app, db, Utils)
-
-// import API Routes
-// =============================================================
-require("./routes/Api")(app, db, Utils)
-
-// import Frontend Routes
-// =============================================================
-require("./routes/Frontend")(app, bcrypt, db, passport, Recaptcha, Utils, validator)
-
-// import Admin Routes
-// =============================================================
-require("./routes/Admin")(app, bcrypt, db, json2csv, GoogleAuthenticator, notp, slugify, Utils, validator)
-
-// setup 404 handling
-// =============================================================
-app.use( async (req, res) => {
-	const { originalUrl, site_data } = req
-	const { traffic } = site_data.settings
-
-	try {
-		// update hit count in db, if applicable
-		if (traffic.log404) {
-			await db.PagesNotFound.updateOne({ source: originalUrl }, { source: originalUrl, $inc: { "hits": 1 }}, { upsert: true })
-		}
-
-		res.redirect('/Error404')
-
-	} catch (error) {
-		console.error(error)
-		res.status(500).end()
-	}
-})
+require("./routes")(app, bcrypt, db, ensureAuthenticated, json2csv, GoogleAuthenticator, notp, passport, pjson, Recaptcha, slugify, Utils, validator)
 
 // starts the server to begin listening
 // =============================================================
